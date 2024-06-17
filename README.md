@@ -1,2 +1,2 @@
 # grid_graph_calculator
-SDL Grid, graph equations, graphics calculator, desmos
+SDL2 Grid, graph equations, graphics calculator, desmos
