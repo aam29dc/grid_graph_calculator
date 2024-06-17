@@ -7,6 +7,8 @@ SDL2 Grid, graph equations, graphics calculator
   
 --scroll left, right, up, down (press up, down, left, right)
 
+--press `esc` to scape, and press `o` or `0` to recenter graph, reset settings
+
 ![1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/bd8b6e00-78dd-4bcf-96ad-53a27f83ebf9)
 
 **To create the picture above:**
