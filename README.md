@@ -26,11 +26,10 @@ SDL2 Grid, graph equations, graphics calculator
 Each graph is ran with 200 x-values (`_iters`) in its corresponding x-interval, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds.
 Basically there are 2 different coordinate systems, `grid coordinates` are normalized; we create the graph here. Then we transform grid coords to `screen coordinates`, which are scaled uniformly on each axis, then scaled to users resolution, then shifted to origin.
 ````c++
-float coef(float x, const float k) { return k; }
-float coef_id(float x, const float k) { return k*x; }
-float coef_squ(float x, const float k) { return k * x*x; }
-float coef_cube(float x, const float k) { return k * x * x * x; }
-float coef_sine(float x, const float k) { return k * sinf(x); }
+constexpr inline float coef(float x, const float k) { return k; }
+constexpr inline float coef_id(float x, const float k) { return k*x; }
+constexpr inline float coef_squ(float x, const float k) { return k * x*x; }
+inline float coef_sine(float x, const float k) { return k * sinf(x); }
 
 void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
 	SDL_FPoint curr = { float((-_scale) + _shiftx),0.0f};
