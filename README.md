@@ -7,8 +7,12 @@ Just like a graphing Calculator:
 
 ![1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/bd8b6e00-78dd-4bcf-96ad-53a27f83ebf9)
 
-the magic of this program is the function
+the magic of this program is the function: drawFunction, which draws a function defined as function, then taken as a parameter:
 ````c++
+float coef(float x, const float k) { return k; }
+float coef_id(float x, const float k) { return k*x; }
+float coef_squ(float x, const float k) { return k * x*x; }
+
 void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
 	SDL_FPoint curr = { float((-_scale) + _shiftx),0.0f};
 
