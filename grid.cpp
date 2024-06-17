@@ -1,0 +1,125 @@
+#include "grid.hpp"
+
+Grid* Grid::_grid = nullptr;
+
+Grid::Grid() {
+	_shiftx = 0.0f;
+	_shifty = 0.0f;
+	_zoom = -10.0f;
+	_scale = 10;
+	_iters = 200;
+
+	width = 1920;
+	height = 1080;
+	window = nullptr;
+	renderer = nullptr;
+}
+
+Grid* Grid::getGrid() {
+	if (_grid == nullptr) _grid = new Grid;
+	return _grid;
+}
+
+void Grid::drawAxises() const {
+	SDL_FPoint origin = { _shiftx, _shifty };
+
+	float zoomS = _zoom;
+
+	if (zoomS == 0) zoomS = 1.0f;
+	else if (zoomS < 0) zoomS = -1.0f / zoomS;
+
+	//draw x axis
+	SDL_RenderDrawLineF(renderer,
+		0,
+		(height/2.0f)+(_shifty*((height/2.0f)/_scale/zoomS)),
+		float(width),
+		(height/2.0f)+(_shifty*((height/2.0f)/_scale/zoomS))
+	);
+
+	//draw y axis
+	SDL_RenderDrawLineF(renderer,
+		(width/2.0f)-(_shiftx*((width/2.0f)/_scale/zoomS)),
+		0,
+		(width/2.0f)-(_shiftx*((width/2.0f)/_scale/zoomS)),
+		float(height)
+	);
+}
+
+void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
+	SDL_FPoint curr = { float((-_scale) + _shiftx),0.0f};
+
+	float dx = (float)_scale*2.0f/_iters;	//width
+	//defines start of x and width of dx for zoom ranges
+	if (_zoom > 0) {
+		curr.x = float(((-_scale) * _zoom) + _shiftx);
+		dx = (_scale * 2.0f * _zoom) / _iters;
+	}
+	else if (_zoom < 0) {
+		curr.x = float((-_scale) / (-_zoom) + _shiftx);
+		dx = ((_scale) * 2.0f / (-_zoom)) / _iters;
+	}
+
+	curr.y = func(curr.x, k);
+	
+	SDL_FPoint prev;
+	float zoomS = _zoom;	// zoom save _zoom variable, if zoom is 0: use 1, and if negative: use negated reciprocal
+
+	for (unsigned int i = 0; i < _iters; i++) {
+		prev = curr;
+		curr.x += dx;
+		curr.y = func(curr.x, k);
+
+		// grid coordinates to screen coordinates:
+		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
+
+		if (zoomS == 0) {
+			zoomS = 1.0f;
+		}
+		else if (zoomS < 0) {
+			zoomS = 1.0f / (-zoomS);
+		}
+
+		SDL_RenderDrawLineF(renderer,
+			((prev.x - _shiftx) / (_scale * zoomS) * (width / 2.0f)) + (width / 2.0f),
+			-((prev.y - _shifty) / (_scale * zoomS) * (height / 2.0f)) + (height / 2.0f),
+
+			((curr.x - _shiftx) / (_scale * zoomS) * (width / 2.0f)) + (width / 2.0f),
+			-((curr.y - _shifty) / (_scale * zoomS) * (height / 2.0f)) + (height / 2.0f));
+	}
+}
+
+unsigned int Grid::getWidth() const {
+	return width;
+}
+
+unsigned int Grid::getHeight() const {
+	return height;
+}
+
+float Grid::getShiftX(void) const {
+	return _shiftx;
+}
+
+float Grid::getShiftY(void) const {
+	return _shifty;
+}
+
+float Grid::getZoom(void) const {
+	return _zoom;
+}
+
+void Grid::setShiftX(const float x) {
+	_shiftx = x;
+}
+
+void Grid::setShiftY(const float y) {
+	_shifty = y;
+}
+
+void Grid::setZoom(const float x) {
+	_zoom = x;
+}
+
+int Grid::getScale(void) const {
+	return _scale;
+}
