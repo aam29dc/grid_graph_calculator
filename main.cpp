@@ -3,6 +3,8 @@
 #include "grid.hpp"
 #undef main
 
+#include <math.h>
+
 float coef(float x, const float k) { return k; }
 float coef_id(float x, const float k) { return k*x; }
 float coef_squ(float x, const float k) { return k * x*x; }
