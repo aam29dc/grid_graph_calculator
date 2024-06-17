@@ -29,6 +29,8 @@ Basically there are 2 different coordinate systems, `grid coordinates` are norma
 float coef(float x, const float k) { return k; }
 float coef_id(float x, const float k) { return k*x; }
 float coef_squ(float x, const float k) { return k * x*x; }
+float coef_cube(float x, const float k) { return k * x * x * x; }
+float coef_sine(float x, const float k) { return k * sinf(x); }
 
 void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
 	SDL_FPoint curr = { float((-_scale) + _shiftx),0.0f};
