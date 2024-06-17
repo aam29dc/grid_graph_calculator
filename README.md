@@ -25,7 +25,7 @@ SDL2 Grid, graph equations, graphics calculator
 		Grid::getGrid()->drawFunction(coef, 1.0f / -i);
         }
 ````
-**A fast solution: `drawFunction` (high framerate)** 
+**A fast solution: `drawFunction` (piecewise function method)** 
 
 --draws a function like `coef_id` (y=kx) defined as function, taken as a parameter to `drawFunction`.
 Each graph is ran with (`_iters`) number of x-values, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds. For linear line graphs, set `_iters` to 1 (only need 2 points to draw a line.) before drawing.
