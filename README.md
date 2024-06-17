@@ -59,7 +59,7 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 To create the picture:
 We then run a hundred iterations of the equations `1/k`, `-1/k`, and `(1/k)x` and `(-1/k)x` with k = 1, ..., 100.
 ````c++
-        for (int i = 0; i < 100; i++) {
+        for (int i = 1; i < 100; i++) {
             SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 255, 0, 255);
             Grid::getGrid()->drawFunction(coef_id, 1.0f/i);
             SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 0, 0, 255);
