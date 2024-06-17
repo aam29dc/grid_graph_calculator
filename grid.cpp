@@ -69,9 +69,6 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 		curr.x += dx;
 		curr.y = func(curr.x, k);
 
-		// grid coordinates to screen coordinates:
-		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
-
 		if (zoomS == 0) {
 			zoomS = 1.0f;
 		}
@@ -79,6 +76,8 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 			zoomS = 1.0f / (-zoomS);
 		}
 
+		// grid coordinates to screen coordinates:
+		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
 		SDL_RenderDrawLineF(renderer,
 			((prev.x - _shiftx) / (_scale * zoomS) * (width / 2.0f)) + (width / 2.0f),
 			-((prev.y - _shifty) / (_scale * zoomS) * (height / 2.0f)) + (height / 2.0f),
