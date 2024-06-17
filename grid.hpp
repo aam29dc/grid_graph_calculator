@@ -37,7 +37,7 @@ public:
 
 	unsigned int getIters(void) const;
 	/* For linear functions use iters = 1, for smooth curves like a sine wave, use a high iters like 200.
-	* \param func takes a function with two float paramaters that returns a float
+	* \param val number of iterations in drawFunction
 	* \returns void
 	*/
 	void setIters(unsigned int val);
