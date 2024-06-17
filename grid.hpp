@@ -20,24 +20,25 @@ public:
 	SDL_Renderer* renderer;
 
 	Grid();
-	static Grid* getGrid();
-	void drawAxises() const;
+	static Grid* getGrid(void);
+	void drawAxises(void) const;
 
 	void drawFunction(float(*func)(float x, const float k), const float k) const;
 
-	unsigned int getWidth() const;
-	unsigned int getHeight() const;
+	unsigned int getWidth(void) const;
+	unsigned int getHeight(void) const;
 
-	float getShiftX(void) const;
-	float getShiftY(void) const;
-	void setShiftX(const float x);
-	void setShiftY(const float y);
+	constexpr float getShiftX(void) const;
+	constexpr float getShiftY(void) const;
+	inline void setShiftX(const float x);
+	inline void setShiftY(const float y);
 
-	float getZoom(void) const;
-	void setZoom(const float x);
+	constexpr float getZoom(void) const;
+	inline void setZoom(const float x);
 
-	int getScale(void) const;
+	constexpr int getScale(void) const;
 
+	bool input(void);
 };
 
 #endif

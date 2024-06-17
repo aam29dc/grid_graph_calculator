@@ -15,12 +15,12 @@ Grid::Grid() {
 	renderer = nullptr;
 }
 
-Grid* Grid::getGrid() {
+Grid* Grid::getGrid(void) {
 	if (_grid == nullptr) _grid = new Grid;
 	return _grid;
 }
 
-void Grid::drawAxises() const {
+void Grid::drawAxises(void) const {
 	SDL_FPoint origin = { _shiftx, _shifty };
 
 	float zoomS = _zoom;
@@ -46,7 +46,7 @@ void Grid::drawAxises() const {
 }
 
 void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
-	SDL_FPoint curr = { float((-_scale) + _shiftx),0.0f};
+	SDL_FPoint curr = { float((-_scale) + _shiftx), 0.0f};
 
 	float dx = (float)_scale*2.0f/_iters;	//width
 	//defines start of x and width of dx for zoom ranges
@@ -87,38 +87,90 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 	}
 }
 
-unsigned int Grid::getWidth() const {
+bool Grid::input(void) {
+	SDL_Event e;
+	bool quit = false;
+	while (SDL_PollEvent(&e) != 0)
+	{
+		//User requests quit
+		if (e.type == SDL_QUIT)
+		{
+			quit = true;
+		}
+		//User presses a key
+		else if (e.type == SDL_KEYDOWN)
+		{
+			//Select surfaces based on key press
+			switch (e.key.keysym.sym)
+			{
+			case SDLK_UP:
+				_shifty += _scale / 100.0f;
+				break;
+			case SDLK_DOWN:
+				_shifty += -_scale / 100.0f;
+				break;
+			case SDLK_LEFT:
+				_shiftx += _scale / 100.0f;
+				break;
+			case SDLK_RIGHT:
+				_shiftx += -_scale / 100.0f;
+				break;
+			case SDLK_MINUS: case SDLK_UNDERSCORE:
+				_zoom += -_scale / 10.0f;
+				break;
+			case SDLK_EQUALS: case SDLK_PLUS:
+				_zoom += _scale / 10.0f;
+				break;
+			case SDLK_ESCAPE:
+				quit = true;
+				break;
+			case SDLK_o: case SDLK_0:
+				_shiftx = 0.0f;
+				_shifty = 0.0f;
+				_zoom = -10.0f;
+				_scale = 10;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	return quit;
+}
+
+unsigned int Grid::getWidth(void) const {
 	return width;
 }
 
-unsigned int Grid::getHeight() const {
+unsigned int Grid::getHeight(void) const {
 	return height;
 }
 
-float Grid::getShiftX(void) const {
+constexpr float Grid::getShiftX(void) const {
 	return _shiftx;
 }
 
-float Grid::getShiftY(void) const {
+constexpr float Grid::getShiftY(void) const {
 	return _shifty;
 }
 
-float Grid::getZoom(void) const {
+constexpr float Grid::getZoom(void) const {
 	return _zoom;
 }
 
-void Grid::setShiftX(const float x) {
+inline void Grid::setShiftX(const float x) {
 	_shiftx = x;
 }
 
-void Grid::setShiftY(const float y) {
+inline void Grid::setShiftY(const float y) {
 	_shifty = y;
 }
 
-void Grid::setZoom(const float x) {
+inline void Grid::setZoom(const float x) {
 	_zoom = x;
 }
 
-int Grid::getScale(void) const {
+constexpr int Grid::getScale(void) const {
 	return _scale;
 }
