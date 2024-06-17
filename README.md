@@ -18,16 +18,17 @@ SDL2 Grid, graph equations, graphics calculator
 --We run a hundred iterations of the equations `1/k`, `-1/k`, and `(1/k)x` and `(-1/k)x` with k = 1, ..., 100.
 ````c++
         for (int i = 1; i < 100; i++) {
-            Grid::getGrid()->drawFunction(coef_id, 1.0f/i);
-            Grid::getGrid()->drawFunction(coef_id, -1.0f/i);
-            Grid::getGrid()->drawFunction(coef, 1.0f / i);
-            Grid::getGrid()->drawFunction(coef, 1.0f / -i);
+		Grid::getGrid()->setIters(1);   // since we are drawing linear lines, we set the iters low, since a line only needs two f(x1), and f(x2).
+		Grid::getGrid()->drawFunction(coef_id, 1.0f/i);
+		Grid::getGrid()->drawFunction(coef_id, -1.0f/i);
+		Grid::getGrid()->drawFunction(coef, 1.0f / i);
+		Grid::getGrid()->drawFunction(coef, 1.0f / -i);
         }
 ````
 **A fast solution: `drawFunction`**
 
 --draws a function like `coef_id` (y=kx) defined as function, taken as a parameter to `drawFunction`.
-Each graph is ran with 200 x-values (`_iters`) in its corresponding x-interval, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds.
+Each graph is ran with 200 x-values (`_iters`) in its corresponding x-interval, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds. For linear line graphs, `_iters` is set to 1, since we only need 2 points to draw a line.
 Basically there are 2 different coordinate systems, `grid coordinates` are normalized; we create the graph here. Then we transform grid coords to `screen coordinates`, which are scaled uniformly on each axis, then scaled to users resolution, then shifted to origin.
 ````c++
 constexpr inline float coef(float x, const float k) { return k; }
