@@ -20,31 +20,6 @@ Grid* Grid::getGrid(void) {
 	return _grid;
 }
 
-void Grid::drawAxises(void) const {
-	SDL_FPoint origin = { _shiftx, _shifty };
-
-	float zoomS = _zoom;
-
-	if (zoomS == 0) zoomS = 1.0f;
-	else if (zoomS < 0) zoomS = -1.0f / zoomS;
-
-	//draw x axis
-	SDL_RenderDrawLineF(renderer,
-		0,
-		(height/2.0f)+(_shifty*((height/2.0f)/_scale/zoomS)),
-		float(width),
-		(height/2.0f)+(_shifty*((height/2.0f)/_scale/zoomS))
-	);
-
-	//draw y axis
-	SDL_RenderDrawLineF(renderer,
-		(width/2.0f)-(_shiftx*((width/2.0f)/_scale/zoomS)),
-		0,
-		(width/2.0f)-(_shiftx*((width/2.0f)/_scale/zoomS)),
-		float(height)
-	);
-}
-
 void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
 	SDL_FPoint curr = { float((-_scale) + _shiftx), 0.0f};
 
@@ -85,6 +60,31 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 			((curr.x - _shiftx) / (_scale * zoomS) * (width / 2.0f)) + (width / 2.0f),
 			-((curr.y - _shifty) / (_scale * zoomS) * (height / 2.0f)) + (height / 2.0f));
 	}
+}
+
+void Grid::drawAxises(void) const {
+	SDL_FPoint origin = { _shiftx, _shifty };
+
+	float zoomS = _zoom;
+
+	if (zoomS == 0) zoomS = 1.0f;
+	else if (zoomS < 0) zoomS = -1.0f / zoomS;
+
+	//draw x axis
+	SDL_RenderDrawLineF(renderer,
+		0,
+		(height / 2.0f) + (_shifty * ((height / 2.0f) / _scale / zoomS)),
+		float(width),
+		(height / 2.0f) + (_shifty * ((height / 2.0f) / _scale / zoomS))
+	);
+
+	//draw y axis
+	SDL_RenderDrawLineF(renderer,
+		(width / 2.0f) - (_shiftx * ((width / 2.0f) / _scale / zoomS)),
+		0,
+		(width / 2.0f) - (_shiftx * ((width / 2.0f) / _scale / zoomS)),
+		float(height)
+	);
 }
 
 bool Grid::input(void) {
@@ -145,32 +145,4 @@ unsigned int Grid::getWidth(void) const {
 
 unsigned int Grid::getHeight(void) const {
 	return height;
-}
-
-constexpr float Grid::getShiftX(void) const {
-	return _shiftx;
-}
-
-constexpr float Grid::getShiftY(void) const {
-	return _shifty;
-}
-
-constexpr float Grid::getZoom(void) const {
-	return _zoom;
-}
-
-inline void Grid::setShiftX(const float x) {
-	_shiftx = x;
-}
-
-inline void Grid::setShiftY(const float y) {
-	_shifty = y;
-}
-
-inline void Grid::setZoom(const float x) {
-	_zoom = x;
-}
-
-constexpr int Grid::getScale(void) const {
-	return _scale;
 }
