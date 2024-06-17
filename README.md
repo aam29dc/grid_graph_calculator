@@ -9,6 +9,17 @@ SDL2 Grid, graph equations, graphics calculator
 
 ![1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/bd8b6e00-78dd-4bcf-96ad-53a27f83ebf9)
 
+**To create the picture above:**
+
+--We run a hundred iterations of the equations `1/k`, `-1/k`, and `(1/k)x` and `(-1/k)x` with k = 1, ..., 100.
+````c++
+        for (int i = 1; i < 100; i++) {
+            Grid::getGrid()->drawFunction(coef_id, 1.0f/i);
+            Grid::getGrid()->drawFunction(coef_id, -1.0f/i);
+            Grid::getGrid()->drawFunction(coef, 1.0f / i);
+            Grid::getGrid()->drawFunction(coef, 1.0f / -i);
+        }
+````
 **A fast solution:**
 
 --The magic of this program is the function: `drawFunction`, which draws a function like `coef_id` (y=kx) defined as function, taken as a parameter to `drawFunction`.
@@ -62,14 +73,6 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 	}
 }
 ````
-**To create the picture above:**
 
---We then run a hundred iterations of the equations `1/k`, `-1/k`, and `(1/k)x` and `(-1/k)x` with k = 1, ..., 100.
-````c++
-        for (int i = 1; i < 100; i++) {
-            Grid::getGrid()->drawFunction(coef_id, 1.0f/i);
-            Grid::getGrid()->drawFunction(coef_id, -1.0f/i);
-            Grid::getGrid()->drawFunction(coef, 1.0f / i);
-            Grid::getGrid()->drawFunction(coef, 1.0f / -i);
-        }
-````
+![2](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/191320af-5fc9-4da5-8c75-a95babed24c4)
+** `x`, `x^2`, `x^3` drawn on the same graph on the x interval [-10,10] **
