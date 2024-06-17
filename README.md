@@ -60,7 +60,8 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 	}
 }
 ````
-To create the picture above:
+**To create the picture above:**
+
 --We then run a hundred iterations of the equations `1/k`, `-1/k`, and `(1/k)x` and `(-1/k)x` with k = 1, ..., 100.
 ````c++
         for (int i = 1; i < 100; i++) {
