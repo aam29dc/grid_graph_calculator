@@ -5,11 +5,11 @@
 
 #include <math.h>
 
-float coef(float x, const float k) { return k; }
-float coef_id(float x, const float k) { return k*x; }
-float coef_squ(float x, const float k) { return k * x*x; }
-float coef_cube(float x, const float k) { return k * x * x * x; }
-float coef_sine(float x, const float k) { return k * sinf(x); }
+constexpr inline float coef(float x, const float k) { return k; }
+constexpr inline float coef_id(float x, const float k) { return k*x; }
+constexpr inline float coef_squ(float x, const float k) { return k * x*x; }
+constexpr inline float coef_cube(float x, const float k) { return k * x * x * x; }
+inline float coef_sine(float x, const float k) { return k * sinf(x); }
 
 auto main() -> int {
 	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0) {
