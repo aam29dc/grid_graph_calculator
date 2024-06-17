@@ -26,7 +26,7 @@ public:
 
 	void drawAxises(void) const;
 
-	/* For linear functions use iters = 1, for smooth curves like a sine wave, use a high iters like 200.
+	/* Draws a function on a graph, piecewise graph method. Use small iter values for linear functions (1). Use high iter values for non-linear (200).
 	* \param func takes a function with two float paramaters that returns a float
 	* \returns void
 	*/
@@ -36,6 +36,10 @@ public:
 	unsigned int getHeight(void) const;
 
 	unsigned int getIters(void) const;
+	/* For linear functions use iters = 1, for smooth curves like a sine wave, use a high iters like 200.
+	* \param func takes a function with two float paramaters that returns a float
+	* \returns void
+	*/
 	void setIters(unsigned int val);
 
 	bool input(void);
