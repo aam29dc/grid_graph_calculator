@@ -11,7 +11,7 @@ SDL2 Grid, graph equations, graphics calculator
 
 The magic of this program is the function: `drawFunction`, which draws a function like `coef_id` (y=kx) defined as function, taken as a parameter to `drawFunction`.
 Each graph is ran 200 iterations (`_iters`) in its corresponding x-interval, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds.
-Basically there are 2 different coordinate systems, grid coordinates are normalized; we create the graph here. Then we use grid coords to create screen coordinates, which are scaled to uniformly on each axis, then scaled to users resolution, then shifted to origin.
+Basically there are 2 different coordinate systems, `grid coordinates` are normalized; we create the graph here. Then we use grid coords to create `screen coordinates`, which are scaled to uniformly on each axis, then scaled to users resolution, then shifted to origin.
 ````c++
 float coef(float x, const float k) { return k; }
 float coef_id(float x, const float k) { return k*x; }
