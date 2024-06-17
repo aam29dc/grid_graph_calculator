@@ -146,3 +146,11 @@ unsigned int Grid::getWidth(void) const {
 unsigned int Grid::getHeight(void) const {
 	return height;
 }
+
+unsigned int Grid::getIters(void) const {
+	return _iters;
+}
+
+void Grid::setIters(unsigned int val) {
+	_iters = val;
+}
