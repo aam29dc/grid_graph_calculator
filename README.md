@@ -28,7 +28,7 @@ SDL2 Grid, graph equations, graphics calculator
 **A fast solution: `drawFunction` (high framerate)** 
 
 --draws a function like `coef_id` (y=kx) defined as function, taken as a parameter to `drawFunction`.
-Each graph is ran with 200 x-values (`_iters`) in its corresponding x-interval, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds. For linear line graphs, `_iters` is set to 1, since we only need 2 points to draw a line.
+Each graph is ran with (`_iters`) number of x-values, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds. For linear line graphs, set `_iters` to 1 (only need 2 points to draw a line.) before drawing.
 Basically there are 2 different coordinate systems, `grid coordinates` are normalized; we create the graph here. Then we transform grid coords to `screen coordinates`, which are scaled uniformly on each axis, then scaled to users resolution, then shifted to origin.
 ````c++
 constexpr inline float coef(float x, const float k) { return k; }
