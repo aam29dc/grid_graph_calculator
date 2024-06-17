@@ -28,9 +28,9 @@ auto main() -> int {
 
         //projection grid
         SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 0, 0, 255);
-
+		
+        Grid::getGrid()->setIters(1);   // since we are drawing linear lines, we set the iters low, since a line only needs two f(x1), and f(x2).
         for (int i = 1; i <= 100; i++) {
-            Grid::getGrid()->setIters(1);   // since we are drawing linear lines, we set the iters low, since a line only needs two f(x1), and f(x2).
             SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 255, 0, 255);
             Grid::getGrid()->drawFunction(coef_id, 1.0f / i);
             SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 0, 0, 255);
