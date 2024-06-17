@@ -9,7 +9,8 @@ SDL2 Grid, graph equations, graphics calculator
 
 ![1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/bd8b6e00-78dd-4bcf-96ad-53a27f83ebf9)
 
-the magic of this program is the function: `drawFunction`, which draws a function defined as function, then taken as a parameter to drawFunction:
+The magic of this program is the function: `drawFunction`, which draws a function like `coef_id` (y=kx) defined as function, then taken as a parameter to `drawFunction`:
+Each graph is ran 200 iterations (`_iters`) in its corresponding x-interval(depending on zoom & shifts), so curves can appear to be smooth when zoomed in/out, therefore no need to check drawing out of bounds. Fast & optimized solution.
 ````c++
 float coef(float x, const float k) { return k; }
 float coef_id(float x, const float k) { return k*x; }
@@ -58,8 +59,8 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 	}
 }
 ````
-To create the picture:
-We then run a hundred iterations of the equations `1/k`, `-1/k`, and `(1/k)x` and `(-1/k)x` with k = 1, ..., 100.
+To create the picture above:
+--We then run a hundred iterations of the equations `1/k`, `-1/k`, and `(1/k)x` and `(-1/k)x` with k = 1, ..., 100.
 ````c++
         for (int i = 1; i < 100; i++) {
             SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 255, 0, 255);
