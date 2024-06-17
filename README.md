@@ -2,6 +2,7 @@
 SDL2 Grid, graph equations, graphics calculator, desmos
 
 Just like a graphing Calculator:
+
   Zoom in/out(press minus/plus),
   
   scroll left, right, up, down(press up, down, left, right)
