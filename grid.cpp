@@ -53,7 +53,7 @@ void Grid::displayString(std::string str, const float xpos, const float ypos) co
 }
 
 void Grid::drawFunction(const float(*f)(const float), const float k, const float c) const {
-	SDL_FPoint pt = {-_zoom + _shiftx, k * f(pt.x) + c};
+	SDL_FPoint pt = {-_zoom + _shiftx, k * f(pt.x) + c };	//current point
 
 	for (unsigned int i = 0; i < _iters; i++) {
 		// grid coordinates to screen coordinates:
@@ -61,8 +61,11 @@ void Grid::drawFunction(const float(*f)(const float), const float k, const float
 		SDL_RenderDrawLineF(renderer,
 			((pt.x - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
 			-((pt.y - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f),
-			((pt.x + ((2.0f * _zoom) / _iters) - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
-			-((k * f(pt.x + ((2.0f * _zoom) / _iters)) + c - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f));
+			((pt.x + (2.0f * _zoom) / _iters - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
+			-((k * f(pt.x + (2.0f * _zoom) / _iters) + c - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f));
+
+		pt.x += (2.0f * _zoom) / _iters;
+		pt.y = k * f(pt.x + (2.0f * _zoom) / _iters) + c;
 	}
 }
 
