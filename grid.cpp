@@ -52,35 +52,21 @@ void Grid::displayString(std::string str, const float xpos, const float ypos) co
 	SDL_DestroyTexture(msg);
 }
 
-void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
-	SDL_FPoint curr = { float((-1.0f) + _shiftx), 0.0f};
-
-	//defines start of x and width of dx for zoom ranges
-	curr.x = -_zoom + _shiftx;
-	float dx = (2.0f * _zoom) / _iters;
-
-	curr.y = func(curr.x, k);
-	
-	SDL_FPoint prev;
+void Grid::drawFunction(const float(*f)(const float), const float k, const float c) const {
+	SDL_FPoint pt = {-_zoom + _shiftx, k * f(pt.x) + c};
 
 	for (unsigned int i = 0; i < _iters; i++) {
-		prev = curr;
-		curr.x += dx;
-		curr.y = func(curr.x, k);
-
 		// grid coordinates to screen coordinates:
 		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
 		SDL_RenderDrawLineF(renderer,
-			((prev.x - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
-			-((prev.y - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f),
-			((curr.x - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
-			-((curr.y - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f));
+			((pt.x - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
+			-((pt.y - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f),
+			((pt.x + ((2.0f * _zoom) / _iters) - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
+			-((k * f(pt.x + ((2.0f * _zoom) / _iters)) + c - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f));
 	}
 }
 
 void Grid::drawAxises(void) const {
-	SDL_FPoint origin = { _shiftx, _shifty };
-
 	//draw x axis
 	SDL_RenderDrawLineF(renderer,
 		0,
@@ -127,9 +113,9 @@ bool Grid::input(void) {
 				_shiftx += 0.1f;
 				break;
 			case SDLK_MINUS: case SDLK_UNDERSCORE:
-				_zoom += -0.1f;
+				_zoom -= 0.1f;
 				break;
-			case SDLK_EQUALS: case SDLK_PLUS:
+			case SDLK_EQUALS: case SDLK_PLUS:;
 				_zoom += 0.1f;
 				break;
 			case SDLK_ESCAPE:
@@ -162,7 +148,8 @@ unsigned int Grid::getIters(void) const {
 }
 
 void Grid::setIters(unsigned int val) {
-	_iters = val;
+	if (val <= 1) _iters = 1;
+	else _iters = val;
 }
 
 float Grid::getShiftx(void) const {

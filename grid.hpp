@@ -48,7 +48,7 @@ public:
 	* \param func takes a function with two float paramaters that returns a float
 	* \returns void
 	*/
-	void drawFunction(float(*func)(float x, const float k), const float k) const;
+	void drawFunction(const float(*f)(const float), const float k = 1, const float c = 0) const;
 
 	unsigned int getWidth(void) const;
 	unsigned int getHeight(void) const;

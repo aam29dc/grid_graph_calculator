@@ -1,11 +1,11 @@
 #include "grid.hpp"
 #undef main
 
-constexpr inline float coef(float x, const float k) { return k; }
-constexpr inline float coef_id(float x, const float k) { return k*x; }
-constexpr inline float coef_squ(float x, const float k) { return k * x*x; }
-constexpr inline float coef_cube(float x, const float k) { return k * x * x * x; }
-inline float coef_sine(float x, const float k) { return k * sinf(x); }
+constexpr inline const float Gconstant(const float x) { return 1; }
+constexpr inline const float Gidentity(const float x) { return x; }
+constexpr inline const float Gsquare(const float x) { return x*x; }
+constexpr inline const float Gcube(const float x) { return x*x*x; }
+inline const float Gsine(const float x) { return sinf(x); }
 
 auto main() -> int {
 	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0) {
@@ -36,6 +36,8 @@ auto main() -> int {
 
     Uint32 startTime = 0;
 
+    SDL_SetRenderDrawBlendMode(Grid::getGrid()->renderer, SDL_BLENDMODE_ADD);
+
 	while (quit == false) {
         startTime = SDL_GetTicks();
 
@@ -44,17 +46,18 @@ auto main() -> int {
 
         quit = Grid::getGrid()->input();
 
-        Grid::getGrid()->setIters(1);   // since we are drawing linear lines, we set the iters low, since a line only needs two f(x1), and f(x2).
-        for (int i = 1; i <= 100; i++) {    //projection grid
-            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 255, 0, 255);
-            Grid::getGrid()->drawFunction(coef_id, 1.0f / i);
-            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 0, 0, 255);
-            Grid::getGrid()->drawFunction(coef_id, -1.0f / i);
+        Grid::getGrid()->setIters(1);       // since we are drawing linear lines, we set the iters low, since a line only needs two f(x1), and f(x2).
 
-            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 0, 255, 255);
-            Grid::getGrid()->drawFunction(coef, 1.0f / i);
-            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 255, 0, 255);
-            Grid::getGrid()->drawFunction(coef, 1.0f / -i);
+        for (int i = 1; i <= 100; i++) {    //projection grid
+            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 255, 0, 128);
+            Grid::getGrid()->drawFunction(Gidentity, 1.0f / i);
+            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 0, 0, 128);
+            Grid::getGrid()->drawFunction(Gidentity, -1.0f / i);
+
+            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 0, 255, 128);
+            Grid::getGrid()->drawFunction(Gconstant, 1.0f / i);
+            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 255, 0, 128);
+            Grid::getGrid()->drawFunction(Gconstant, 1.0f / -i);
         }
 
         SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 255, 255, 255);
