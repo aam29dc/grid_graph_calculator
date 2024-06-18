@@ -17,7 +17,8 @@ SDL2 Grid, graph equations, graphics calculator
 
 --We run a hundred iterations of the equations `1/k`, `-1/k`, and `(1/k)x` and `(-1/k)x` with k = 1, ..., 100.
 ````c++
-	Grid::getGrid()->setIters(1);   // since we are drawing linear lines, we set the iters low, since a line only needs two f(x1), and f(x2).
+	Grid::getGrid()->setIters(1);   // since we are drawing linear lines,
+					// we set the iters low, since a line only needs two f(x1), and f(x2).
         for (int i = 1; i < 100; i++) {
 		Grid::getGrid()->drawFunction(coef_id, 1.0f/i);
 		Grid::getGrid()->drawFunction(coef_id, -1.0f/i);
