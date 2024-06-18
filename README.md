@@ -31,7 +31,6 @@ SDL2 Grid, graph equations, graphics calculator
 Each graph is ran with (`_iters`) number of x-values, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds. For linear line graphs, set `_iters` to 1 (only need 2 points to draw a line.) before drawing.
 Basically there are 2 different coordinate systems, `grid coordinates` are normalized; we create the graph here. Then we transform grid coords to `screen coordinates`, which are scaled uniformly on each axis, then scaled to users resolution, then shifted to origin.
 
-````
 ![x1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/15b1ec97-9d2b-4909-9873-357e3bee2384)
 
 ** `x`, `x^2`, `x^3` and `sin(x)` drawn on the same graph on the x interval [-1,1] (_scale = 10 && _zoom = -10) **
