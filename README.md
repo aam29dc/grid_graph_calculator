@@ -28,9 +28,9 @@ SDL2 Grid, graph equations, graphics calculator
 ````
 **A fast solution: `drawFunction` (piecewise function method)** 
 
---draws a function like `coef_id` (y=kx) defined as function, taken as a parameter to `drawFunction`.
-Each graph is ran with (`_iters`) number of x-values, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds. For linear line graphs, set `_iters` to 1 (only need 2 points to draw a line.) before drawing.
-Basically there are 2 different coordinate systems, `grid coordinates` are normalized; we create the graph here. Then we transform grid coords to `screen coordinates`, which are scaled uniformly on each axis, then scaled to users resolution, then shifted to origin.
+--draws a function like (y=kx) `coef_id` defined as a function, taken as a parameter to `drawFunction`.
+Each graph is ran with (`_iters`) number of x-values, so curves can appear to be smooth when zoomed in/out. For linear line graphs, set `_iters` to 1 (only need 2 points to draw a line.) before drawing.
+`grid coordinates` are normalized [-1,1]; we create the graph here. Then we transform grid coords to `screen coordinates` using scaling and shifts.
 
 ![x1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/15b1ec97-9d2b-4909-9873-357e3bee2384)
 
