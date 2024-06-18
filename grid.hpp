@@ -3,6 +3,11 @@
 
 #include <SDL.h>
 #include <iostream>
+#include <string>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+
+extern TTF_Font* font;
 
 class Grid {
 private:
@@ -23,6 +28,21 @@ public:
 
 	Grid();
 	static Grid* getGrid(void);
+
+	/* Draws text on screen.
+	* \param str text to display
+	* \param xpos [-1,1]
+	* \param ypos [-1,1]
+	* \returns void
+	*/
+	void displayString(std::string str, const float xpos, const float ypos) const;
+
+	float getShiftx(void) const;
+	float getShifty(void) const;
+	float getZoom(void) const;
+	int getScale(void) const;
+
+	void drawAxisNumbers(void) const;
 
 	void drawAxises(void) const;
 

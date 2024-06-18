@@ -1,6 +1,7 @@
 #include "grid.hpp"
 
 Grid* Grid::_grid = nullptr;
+TTF_Font* font;
 
 Grid::Grid() {
 	_shiftx = 0.0f;
@@ -9,8 +10,8 @@ Grid::Grid() {
 	_scale = 10;
 	_iters = 200;
 
-	width = 1920;
-	height = 1080;
+	width = 800;
+	height = 600;
 	window = nullptr;
 	renderer = nullptr;
 }
@@ -18,6 +19,45 @@ Grid::Grid() {
 Grid* Grid::getGrid(void) {
 	if (_grid == nullptr) _grid = new Grid;
 	return _grid;
+}
+
+void Grid::drawAxisNumbers(void) const {
+	float zoomS = _zoom;
+
+	if (zoomS < 0.0f) zoomS = -zoomS;
+	else if (zoomS > 0.0f) zoomS = 1.0f / zoomS;
+	else zoomS = 1.0f;
+
+	displayString(std::to_string((-_scale / zoomS) + _shiftx), -1.0f, 0.0f); 	//negative x-axis
+	displayString(std::to_string((_scale  / zoomS) + _shiftx), 0.75f, 0.0f); 	//positive x-axis
+
+	displayString(std::to_string((-_scale / zoomS) + _shifty), 0.0f, -0.925f);	//negative y-axis
+	displayString(std::to_string((_scale / zoomS) + _shifty), 0.0f, 1.0f);		//positive y-axis
+}
+
+void Grid::displayString(std::string str, const float xpos, const float ypos) const {
+	SDL_Color color = { 255, 255, 255 };
+
+	SDL_Surface* surfaceMsg = TTF_RenderText_Solid(font, str.c_str(), color);
+	if (surfaceMsg == NULL)	{
+		std::cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << "\n";
+	}
+
+	SDL_Texture* msg = SDL_CreateTextureFromSurface(renderer, surfaceMsg);
+	if (msg == NULL) {
+		std::cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << "\n";
+	}
+
+	SDL_FRect msg_rect;
+	msg_rect.x = ((xpos+1.0f)/2.0f)*(float)width;
+	msg_rect.y = ((-ypos+1.0f)/2.0f)*(float)height;
+	msg_rect.w = str.length()*12.0f;
+	msg_rect.h = 24.0f;
+
+	SDL_RenderCopyF(renderer, msg, NULL, &msg_rect);
+
+	SDL_FreeSurface(surfaceMsg);
+	SDL_DestroyTexture(msg);
 }
 
 void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
@@ -153,4 +193,20 @@ unsigned int Grid::getIters(void) const {
 
 void Grid::setIters(unsigned int val) {
 	_iters = val;
+}
+
+float Grid::getShiftx(void) const {
+	return _shiftx;
+}
+
+float Grid::getShifty(void) const {
+	return _shifty;
+}
+
+float Grid::getZoom(void) const {
+	return _zoom;
+}
+
+int Grid::getScale(void) const {
+	return _scale;
 }
