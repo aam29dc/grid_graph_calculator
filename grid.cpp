@@ -21,12 +21,10 @@ Grid* Grid::getGrid(void) {
 }
 
 void Grid::drawAxisNumbers(void) {
-	float zoomS = _zoom;
-
-	displayString(std::to_string((-zoomS) + _shiftx), -1.0f, 0.0f); 	//negative x-axis
-	displayString(std::to_string((zoomS) + _shiftx), 0.75f, 0.0f); 		//positive x-axis
-	displayString(std::to_string((-zoomS) + _shifty), 0.0f, -0.925f);	//negative y-axis
-	displayString(std::to_string((zoomS) + _shifty), 0.0f, 1.0f);		//positive y-axis
+	displayString(std::to_string((-_zoom) + _shiftx), -1.0f, 0.0f); 	//negative x-axis
+	displayString(std::to_string((_zoom) + _shiftx), 0.75f, 0.0f); 		//positive x-axis
+	displayString(std::to_string((-_zoom) + _shifty), 0.0f, -0.925f);	//negative y-axis
+	displayString(std::to_string((_zoom) + _shifty), 0.0f, 1.0f);		//positive y-axis
 }
 
 void Grid::displayString(std::string str, const float xpos, const float ypos) const {
