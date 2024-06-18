@@ -79,6 +79,6 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 ````
 ![x1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/15b1ec97-9d2b-4909-9873-357e3bee2384)
 
-** `x`, `x^2`, `x^3` and `sin(x)` drawn on the same graph on the x interval [-1,1] (_scale = 10 && _zoom = 10) **
+** `x`, `x^2`, `x^3` and `sin(x)` drawn on the same graph on the x interval [-1,1] (_scale = 10 && _zoom = -10) **
 
 ![x2](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/d8afa7c9-95f2-4d5e-a5e1-54133f45405e)
