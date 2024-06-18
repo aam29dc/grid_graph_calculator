@@ -11,7 +11,7 @@ SDL2 Grid, graph equations, graphics calculator
 
 --press `esc` to scape, and press `o` or `0` to recenter graph, reset settings
 
-![1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/bd8b6e00-78dd-4bcf-96ad-53a27f83ebf9)
+![x3](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/653f3e9d-114a-4b78-ad7a-8a6d7da0c4fe)
 
 **To create the picture above:**
 
@@ -77,7 +77,7 @@ void Grid::drawFunction(float(*func)(float x, const float k), const float k) con
 	}
 }
 ````
-
-![3](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/3f7ed499-b9a3-42b9-9e32-8a8692584e51)
-
+![x1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/15b1ec97-9d2b-4909-9873-357e3bee2384)
 ** `x`, `x^2`, `x^3` and `sin(x)` drawn on the same graph on the x interval [-1,1] (_scale = 1 && _zoom = 1) **
+
+![x2](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/d8afa7c9-95f2-4d5e-a5e1-54133f45405e)
