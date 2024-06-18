@@ -30,52 +30,7 @@ SDL2 Grid, graph equations, graphics calculator
 --draws a function like `coef_id` (y=kx) defined as function, taken as a parameter to `drawFunction`.
 Each graph is ran with (`_iters`) number of x-values, so curves can appear to be smooth when zoomed in/out, and no need to check drawing out of bounds. For linear line graphs, set `_iters` to 1 (only need 2 points to draw a line.) before drawing.
 Basically there are 2 different coordinate systems, `grid coordinates` are normalized; we create the graph here. Then we transform grid coords to `screen coordinates`, which are scaled uniformly on each axis, then scaled to users resolution, then shifted to origin.
-````c++
-constexpr inline float coef(float x, const float k) { return k; }
-constexpr inline float coef_id(float x, const float k) { return k*x; }
-constexpr inline float coef_squ(float x, const float k) { return k * x*x; }
-inline float coef_sine(float x, const float k) { return k * sinf(x); }
 
-void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
-	SDL_FPoint curr = { float((-_scale) + _shiftx),0.0f};
-
-	float dx = (float)_scale*2.0f/_iters;	//width
-	//defines start of x and width of dx for zoom ranges
-	if (_zoom > 0) {
-		curr.x = float(((-_scale) * _zoom) + _shiftx);
-		dx = (_scale * 2.0f * _zoom) / _iters;
-	}
-	else if (_zoom < 0) {
-		curr.x = float((-_scale) / (-_zoom) + _shiftx);
-		dx = ((_scale) * 2.0f / (-_zoom)) / _iters;
-	}
-
-	curr.y = func(curr.x, k);
-	
-	SDL_FPoint prev;
-	float zoomS = _zoom;	// zoom save _zoom variable, if zoom is 0: use 1, and if negative: use negated reciprocal
-
-	for (unsigned int i = 0; i < _iters; i++) {
-		prev = curr;
-		curr.x += dx;
-		curr.y = func(curr.x, k);
-
-		if (zoomS == 0) {
-			zoomS = 1.0f;
-		}
-		else if (zoomS < 0) {
-			zoomS = 1.0f / (-zoomS);
-		}
-		// grid coordinates to screen coordinates:
-		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
-		SDL_RenderDrawLineF(renderer,
-			((prev.x - _shiftx) / (_scale * zoomS) * (width / 2.0f)) + (width / 2.0f),
-			-((prev.y - _shifty) / (_scale * zoomS) * (height / 2.0f)) + (height / 2.0f),
-
-			((curr.x - _shiftx) / (_scale * zoomS) * (width / 2.0f)) + (width / 2.0f),
-			-((curr.y - _shifty) / (_scale * zoomS) * (height / 2.0f)) + (height / 2.0f));
-	}
-}
 ````
 ![x1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/15b1ec97-9d2b-4909-9873-357e3bee2384)
 
