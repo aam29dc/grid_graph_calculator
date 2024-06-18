@@ -3,6 +3,8 @@ SDL2 Grid, graph equations, graphics calculator
 
 (Note: this would be the graphics part of a full graphics calculator program, another part would be parsing a string or expression)
 
+[0.5] Fixed zoom effect, now when you zoom past zero it flips both the axises. (Basically like zooming in to infinity, then going on the 'other side' (mirror universe?!?))
+
 **Just like a graphing Calculator:**
 
 --Zoom in/out (press `minus`/`plus`),
