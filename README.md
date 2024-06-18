@@ -1,4 +1,4 @@
-# grid_graph_calculator '(caution: ears may ring)'
+# grid_graph_calculator
 SDL2 Grid, graph equations, graphics calculator
 
 (Note: this would be the graphics part of a full graphics calculator program, another part would be parsing a string or expression)
