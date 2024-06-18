@@ -16,7 +16,6 @@ private:
 	float _shiftx;
 	float _shifty;
 	float _zoom;
-	int _scale;
 	unsigned int _iters;
 
 	unsigned int width;
@@ -40,9 +39,8 @@ public:
 	float getShiftx(void) const;
 	float getShifty(void) const;
 	float getZoom(void) const;
-	int getScale(void) const;
 
-	void drawAxisNumbers(void) const;
+	void drawAxisNumbers(void);
 
 	void drawAxises(void) const;
 

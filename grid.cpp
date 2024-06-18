@@ -6,8 +6,7 @@ TTF_Font* font;
 Grid::Grid() {
 	_shiftx = 0.0f;
 	_shifty = 0.0f;
-	_zoom = -10.0f;
-	_scale = 10;
+	_zoom = 1.0f;
 	_iters = 200;
 
 	width = 800;
@@ -21,18 +20,13 @@ Grid* Grid::getGrid(void) {
 	return _grid;
 }
 
-void Grid::drawAxisNumbers(void) const {
+void Grid::drawAxisNumbers(void) {
 	float zoomS = _zoom;
 
-	if (zoomS < 0.0f) zoomS = -zoomS;
-	else if (zoomS > 0.0f) zoomS = 1.0f / zoomS;
-	else zoomS = 1.0f;
-
-	displayString(std::to_string((-_scale / zoomS) + _shiftx), -1.0f, 0.0f); 	//negative x-axis
-	displayString(std::to_string((_scale  / zoomS) + _shiftx), 0.75f, 0.0f); 	//positive x-axis
-
-	displayString(std::to_string((-_scale / zoomS) + _shifty), 0.0f, -0.925f);	//negative y-axis
-	displayString(std::to_string((_scale / zoomS) + _shifty), 0.0f, 1.0f);		//positive y-axis
+	displayString(std::to_string((-zoomS) + _shiftx), -1.0f, 0.0f); 	//negative x-axis
+	displayString(std::to_string((zoomS) + _shiftx), 0.75f, 0.0f); 		//positive x-axis
+	displayString(std::to_string((-zoomS) + _shifty), 0.0f, -0.925f);	//negative y-axis
+	displayString(std::to_string((zoomS) + _shifty), 0.0f, 1.0f);		//positive y-axis
 }
 
 void Grid::displayString(std::string str, const float xpos, const float ypos) const {
@@ -61,68 +55,47 @@ void Grid::displayString(std::string str, const float xpos, const float ypos) co
 }
 
 void Grid::drawFunction(float(*func)(float x, const float k), const float k) const {
-	SDL_FPoint curr = { float((-_scale) + _shiftx), 0.0f};
+	SDL_FPoint curr = { float((-1.0f) + _shiftx), 0.0f};
 
-	float dx = (float)_scale*2.0f/_iters;	//width
 	//defines start of x and width of dx for zoom ranges
-	if (_zoom > 0) {
-		curr.x = float(((-_scale) * _zoom) + _shiftx);
-		dx = (_scale * 2.0f * _zoom) / _iters;
-	}
-	else if (_zoom < 0) {
-		curr.x = float((-_scale) / (-_zoom) + _shiftx);
-		dx = ((_scale) * 2.0f / (-_zoom)) / _iters;
-	}
+	curr.x = -_zoom + _shiftx;
+	float dx = (2.0f * _zoom) / _iters;
 
 	curr.y = func(curr.x, k);
 	
 	SDL_FPoint prev;
-	float zoomS = _zoom;	// zoom save _zoom variable, if zoom is 0: use 1, and if negative: use negated reciprocal
 
 	for (unsigned int i = 0; i < _iters; i++) {
 		prev = curr;
 		curr.x += dx;
 		curr.y = func(curr.x, k);
 
-		if (zoomS == 0) {
-			zoomS = 1.0f;
-		}
-		else if (zoomS < 0) {
-			zoomS = 1.0f / (-zoomS);
-		}
-
 		// grid coordinates to screen coordinates:
 		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
 		SDL_RenderDrawLineF(renderer,
-			((prev.x - _shiftx) / (_scale * zoomS) * (width / 2.0f)) + (width / 2.0f),
-			-((prev.y - _shifty) / (_scale * zoomS) * (height / 2.0f)) + (height / 2.0f),
-
-			((curr.x - _shiftx) / (_scale * zoomS) * (width / 2.0f)) + (width / 2.0f),
-			-((curr.y - _shifty) / (_scale * zoomS) * (height / 2.0f)) + (height / 2.0f));
+			((prev.x - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
+			-((prev.y - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f),
+			((curr.x - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
+			-((curr.y - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f));
 	}
 }
 
 void Grid::drawAxises(void) const {
 	SDL_FPoint origin = { _shiftx, _shifty };
 
-	float zoomS = _zoom;
-
-	if (zoomS == 0) zoomS = 1.0f;
-	else if (zoomS < 0) zoomS = -1.0f / zoomS;
-
 	//draw x axis
 	SDL_RenderDrawLineF(renderer,
 		0,
-		(height / 2.0f) + (_shifty * ((height / 2.0f) / _scale / zoomS)),
+		(height / 2.0f) + (_shifty * ((height / 2.0f) / _zoom)),
 		float(width),
-		(height / 2.0f) + (_shifty * ((height / 2.0f) / _scale / zoomS))
+		(height / 2.0f) + (_shifty * ((height / 2.0f) / _zoom))
 	);
 
 	//draw y axis
 	SDL_RenderDrawLineF(renderer,
-		(width / 2.0f) - (_shiftx * ((width / 2.0f) / _scale / zoomS)),
+		(width / 2.0f) - (_shiftx * ((width / 2.0f) / _zoom)),
 		0,
-		(width / 2.0f) - (_shiftx * ((width / 2.0f) / _scale / zoomS)),
+		(width / 2.0f) - (_shiftx * ((width / 2.0f) / _zoom)),
 		float(height)
 	);
 }
@@ -144,22 +117,22 @@ bool Grid::input(void) {
 			switch (e.key.keysym.sym)
 			{
 			case SDLK_UP:
-				_shifty += _scale / 100.0f;
+				_shifty += 0.1f;
 				break;
 			case SDLK_DOWN:
-				_shifty += -_scale / 100.0f;
+				_shifty += -0.1f;
 				break;
 			case SDLK_LEFT:
-				_shiftx += _scale / 100.0f;
+				_shiftx += -0.1f;
 				break;
 			case SDLK_RIGHT:
-				_shiftx += -_scale / 100.0f;
+				_shiftx += 0.1f;
 				break;
 			case SDLK_MINUS: case SDLK_UNDERSCORE:
-				_zoom += -_scale / 10.0f;
+				_zoom += -0.1f;
 				break;
 			case SDLK_EQUALS: case SDLK_PLUS:
-				_zoom += _scale / 10.0f;
+				_zoom += 0.1f;
 				break;
 			case SDLK_ESCAPE:
 				quit = true;
@@ -167,8 +140,7 @@ bool Grid::input(void) {
 			case SDLK_o: case SDLK_0:
 				_shiftx = 0.0f;
 				_shifty = 0.0f;
-				_zoom = -10.0f;
-				_scale = 10;
+				_zoom = 1.0f;
 				break;
 			default:
 				break;
@@ -205,8 +177,4 @@ float Grid::getShifty(void) const {
 
 float Grid::getZoom(void) const {
 	return _zoom;
-}
-
-int Grid::getScale(void) const {
-	return _scale;
 }
