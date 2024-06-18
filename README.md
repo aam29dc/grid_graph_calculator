@@ -14,7 +14,7 @@ Now when you zoom past zero it flips both the axises. (This is like zooming in t
 
 --press `esc` to scape, and press `o` or `0` to recenter graph, reset settings
 
-![x3](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/653f3e9d-114a-4b78-ad7a-8a6d7da0c4fe)
+![4](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/3db4cff1-9809-4218-8b1c-a20c9657fa0f)
 
 **To create the picture above:**
 
@@ -34,9 +34,3 @@ Now when you zoom past zero it flips both the axises. (This is like zooming in t
 --draws a function like (y=kx) `coef_id` defined as a function, taken as a parameter to `drawFunction`.
 Each graph is ran with (`_iters`) number of x-values, so curves can appear to be smooth when zoomed in/out. For linear line graphs, set `_iters` to 1 (only need 2 points to draw a line.) before drawing.
 `grid coordinates` are normalized [-1,1]; we create the graph here. Then we transform grid coords to `screen coordinates` using scaling and shifts.
-
-![x1](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/15b1ec97-9d2b-4909-9873-357e3bee2384)
-
-** `x`, `x^2`, `x^3` and `sin(x)` drawn on the same graph on the x interval [-1,1] (_scale = 10 && _zoom = -10) **
-
-![x2](https://github.com/aam29dc/grid_graph_calculator/assets/73267302/d8afa7c9-95f2-4d5e-a5e1-54133f45405e)
