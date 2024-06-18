@@ -35,7 +35,7 @@ Now when you zoom past zero it flips both the axises. (This is like zooming in t
 Each graph is ran with (`_iters`) number of x-values, so curves can appear to be smooth when zoomed in/out. For linear line graphs, set `_iters` to 1 (only need 2 points to draw a line.) before drawing.
 `grid coordinates` are normalized [-1,1]; we create the graph here. Then we transform grid coords to `screen coordinates` using scaling and shifts.
 
-````
+````c++
 void Grid::drawFunction(const float(*f)(const float), const float k, const float c) const {
 	SDL_FPoint pt = {-_zoom + _shiftx, k * f(pt.x) + c};
 
