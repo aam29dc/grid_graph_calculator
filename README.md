@@ -1,9 +1,7 @@
 # grid_graph_calculator
 SDL2 Grid, graph equations, graphics calculator
 
-[ Currently making a full graphics calculator app, WIP]
-
-(Note: this would be the graphics part of a full graphics calculator program, another part would be parsing a string or expression)
+**[ Currently making a full graphics calculator app, WIP]**
 
 *[0.5.1] Fixed drawFunction: it was adding dx twice to next f(x). Lines should be connected continuously now on all level of iterations.*
 
