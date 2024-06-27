@@ -5,7 +5,7 @@ SDL2 Grid, graph equations, graphics calculator
 
 (Note: this would be the graphics part of a full graphics calculator program, another part would be parsing a string or expression)
 
-*[0.5.1] Fixed drawFunction, it was adding dx twice to next f(x).
+*[0.5.1] Fixed drawFunction: it was adding dx twice to next f(x). Lines should be connected continuously now on all level of iteraions.*
 
 *[0.5] Fixed zoom effect, simplified expressions, zoom starts at 1, removed scale variable, etc; polished code.
 Now when you zoom past zero it flips both the axises. (This is like zooming in to infinity, then going on the 'other side' to a mirror universe)*
