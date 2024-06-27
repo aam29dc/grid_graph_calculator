@@ -54,7 +54,6 @@ void Grid::displayString(std::string str, const float xpos, const float ypos) co
 
 void Grid::drawFunction(const float(*f)(const float), const float k, const float c) const {
 	SDL_FPoint pt = {-_zoom + _shiftx, k * f(pt.x) + c };	//current point
-	SDL_FPoint prev = pt;
 
 	for (unsigned int i = 0; i < _iters; i++) {
 		// grid coordinates to screen coordinates:
