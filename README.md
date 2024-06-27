@@ -42,14 +42,15 @@ void Grid::drawFunction(const float(*f)(const float), const float k, const float
 	for (unsigned int i = 0; i < _iters; i++) {
 		// grid coordinates to screen coordinates:
 		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
-		SDL_RenderDrawLineF(renderer,
-			((pt.x - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
-			-((pt.y - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f),
-			((pt.x + (2.0f * _zoom) / _iters - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f),
-			-((k * f(pt.x + (2.0f * _zoom) / _iters) + c - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f));
+		SDL_RenderDrawLineF(App::getApp()->renderer,
+			((pt.x - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f) + _offsetx,
+			-((pt.y - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f) + _offsety,
+			((pt.x + ((2.0f * _zoom) / _iters) - _shiftx) / _zoom * (width / 2.0f)) + (width / 2.0f) + _offsetx,
+			-((k * f(pt.x + ((2.0f * _zoom) / _iters)) + c - _shifty) / _zoom * (height / 2.0f)) + (height / 2.0f) + _offsety
+		);
 
-		pt.x += (2.0f * _zoom) / _iters;
-		pt.y = k * f(pt.x + (2.0f * _zoom) / _iters) + c;
+		pt.x += ((2.0f * _zoom) / _iters);
+		pt.y = k * f(pt.x) + c;
 	}
 }
 ````
