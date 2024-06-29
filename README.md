@@ -1,8 +1,6 @@
 # grid_graph_calculator
 SDL2 Grid, graph equations, graphics calculator
 
-**[ Currently making a full graphics calculator app, WIP]**
-
 **Just like a graphing Calculator:**
 
 --Zoom in/out (press `minus`/`plus`),
