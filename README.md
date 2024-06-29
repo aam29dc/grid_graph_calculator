@@ -1,10 +1,10 @@
 # grid_graph_calculator
 SDL2 Grid, graph equations, graphics calculator
 
-**Just like a graphing Calculator:**
+- prevents invalid input from being entered into expression ( example: can't press decimal . twice to get .. which is always invalid)
+- graphs algebraic functions and evaluates expressions
 
---Zoom in/out (press `minus`/`plus`),
-  
---scroll left, right, up, down (press `up`, `down`, `left`, `right`)
+similar design to windows calculator standard + graph
 
---press `esc` to scape, and press `o` or `0` to recenter graph, reset settings
+# TODO
+-big int
