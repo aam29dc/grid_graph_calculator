@@ -1,82 +1,40 @@
-#include "grid.hpp"
+#include "app.hpp"
 #undef main
 
-constexpr inline const float Gconstant(const float x) { return 1; }
-constexpr inline const float Gidentity(const float x) { return x; }
-constexpr inline const float Gsquare(const float x) { return x*x; }
-constexpr inline const float Gcube(const float x) { return x*x*x; }
-inline const float Gsine(const float x) { return sinf(x); }
+#include <float.h>
 
 auto main() -> int {
-	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0) {
-        Grid::getGrid()->window = SDL_CreateWindow("Grid", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Grid::getGrid()->getWidth(), Grid::getGrid()->getHeight(), SDL_WINDOW_SHOWN);
-        Grid::getGrid()->renderer = SDL_CreateRenderer(Grid::getGrid()->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	//read config first
+	//get variables settings
+	//then set variables
 
-        //Set texture filtering to linear
-        if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-            std::cout << "Warning: Linear texture filtering not enabled!" << "\n";
-        }
+	//std::cout << substitute("2*x+1-x*x^x/x+1239.0", 'x', 123) << "\n\n";
 
-        if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-            std::cout << "SDL_image could not initialize! SDL_image Error :" << IMG_GetError() << "\n";
-        }
+	//std::cout << (infixToPostfix("0.1+0.1-0.1")) << "\n";
+	/*std::cout << (infixToPostfix("0.123+0.123-0.123")) << "\n";
+	std::cout << (infixToPostfix("1.2345+1.2345-1.2345")) << "\n";
+	std::cout << (infixToPostfix("0.00001+0.00001-0.00001")) << "\n";
+	std::cout << (infixToPostfix("9999.999901/2/2")) << "\n";*/
 
-        //Initialize SDL_ttf
-        if (TTF_Init() == -1) {
-            std::cout << "SDL_ttf could not initialize! SDL_ttf Error:" <<  TTF_GetError() << "\n";
-        }
 
-        font = TTF_OpenFont("assets/arial.ttf", 24);
-        if (font == NULL) {
-            std::cout << "Failed to load lazy font! SDL_ttf Error: \n" <<  TTF_GetError() << "\n";
-        }
+	readConfigFile("assets/config.cfg");
+
+
+	//App::getApp()->init(std::any_cast<int>(variables["width"]), std::any_cast<int>(variables["height"]));
+	if (!App::getApp()->init()) {
+		std::cout << "App could not init\n";
+		return 0;
+	}
+	bool quit = false;
+
+	while (!quit) {
+		quit = App::getApp()->handleEvents();
+		App::getApp()->update();
+		App::getApp()->render();
 	}
 
-    bool quit = false;
-
-    Uint32 startTime = 0;
-
-    SDL_SetRenderDrawBlendMode(Grid::getGrid()->renderer, SDL_BLENDMODE_ADD);
-
-	while (quit == false) {
-        startTime = SDL_GetTicks();
-
-        SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 0, 0, 255);
-        SDL_RenderClear(Grid::getGrid()->renderer);
-
-        quit = Grid::getGrid()->input();
-
-        Grid::getGrid()->setIters(1);       // since we are drawing linear lines, we set the iters low, since a line only needs two f(x1), and f(x2).
-
-        for (int i = 1; i <= 100; i++) {    //projection grid
-            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 255, 0, 128);
-            Grid::getGrid()->drawFunction(Gidentity, 1.0f / i);
-            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 0, 0, 128);
-            Grid::getGrid()->drawFunction(Gidentity, -1.0f / i);
-
-            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 0, 0, 255, 128);
-            Grid::getGrid()->drawFunction(Gconstant, 1.0f / i);
-            SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 255, 0, 128);
-            Grid::getGrid()->drawFunction(Gconstant, 1.0f / -i);
-        }
-
-        SDL_SetRenderDrawColor(Grid::getGrid()->renderer, 255, 255, 255, 255);
-        Grid::getGrid()->drawAxises();
-        Grid::getGrid()->drawAxisNumbers();
-
-        Grid::getGrid()->displayString("X: " + std::to_string(Grid::getGrid()->getShiftx()), -0.9f, 0.9f);
-        Grid::getGrid()->displayString("Y: " + std::to_string(Grid::getGrid()->getShifty()), -0.9f, 0.8f);
-        Grid::getGrid()->displayString("Zoom: " + std::to_string(Grid::getGrid()->getZoom()), -0.9f, 0.7f);
-        Grid::getGrid()->displayString("FPS: " + std::to_string(int(1.0f / ((SDL_GetTicks() - startTime) / 1000.0f))), 0.7f, 0.9f);
-
-        SDL_RenderPresent(Grid::getGrid()->renderer);
-	}
-
-    SDL_DestroyRenderer(Grid::getGrid()->renderer);
-    SDL_DestroyWindow(Grid::getGrid()->window);
-    TTF_Quit();
-    IMG_Quit();
-    SDL_Quit();
+	//App::getApp()->getGrid()->drawFunction(App::getApp()->renderer, "2*x");
+	//while (1) true;
 
 	return 0;
 }
