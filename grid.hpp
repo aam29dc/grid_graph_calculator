@@ -26,21 +26,14 @@ private:
 public:
 	Grid();
 
-	void displayStats(const Uint32 startTime) const;
+	void displayStats(const Uint32& startTime) const;
 	void draw(SDL_Renderer* renderer) const;
-	// takes a expression with an 'x' variable, no constants only numbers
-	//void drawFunction(std::string expr)
 
-	/* Draws a function on a graph, piecewise graph method. Use small iter values for linear functions (1). Use high iter values for non-linear (200).
+	/* Draws a function on a graph, piecewise graph method. Use small iter values for linear functions (1). Use high iter values for non-linear (100).
 	* \param func takes a function with two float paramaters that returns a float
 	* \returns void
 	*/
-
-	void drawFunction(SDL_Renderer* renderer, const std::string expr) const;
-	void drawFunction(SDL_Renderer* renderer, const float(*f)(const float), const float k = 1, const float c = 0) const;
-	void drawFunction2(SDL_Renderer* renderer, const float(*f)(const float), const float k = 1, const float c = 0) const;
-	void drawFunction3(SDL_Renderer* renderer, const float(*f)(const float), const float k = 1, const float c = 0) const;
-	void drawFunction4(SDL_Renderer* renderer, const std::string PFexpr) const;
+	void drawFunction(SDL_Renderer* renderer, const std::string& expr) const;
 
 	float getShiftx() const;
 	float getShifty() const;
@@ -52,10 +45,12 @@ public:
 	* \param val number of iterations in drawFunction
 	* \returns void
 	*/
-	void setIters(const unsigned int val);
-	void setShiftx(const float val);
-	void setShifty(const float val);
-	void setZoom(const float val);
+	void setIters(const unsigned int& val);
+	void setShiftx(const float& val);
+	void setShifty(const float& val);
+	void setZoom(const float& val);
+	void setHeight(const unsigned& val);
+	void setWidth(const unsigned& val);
 };
 
 #endif

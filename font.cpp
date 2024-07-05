@@ -2,7 +2,7 @@
 
 TTF_Font* font;
 
-bool initFont(const std::string src) {
+bool initFont(const std::string& src) {
     if (TTF_Init() == -1) return false;
 
     font = TTF_OpenFont("assets/RobotoMono-VariableFont_wght.ttf", int(TEXTSIZE));
@@ -12,7 +12,7 @@ bool initFont(const std::string src) {
     return true;
 }
 
-void drawString(SDL_Renderer* renderer, const std::string str, const int xpos, const int ypos, SDL_Color color, const bool limit) {
+void drawString(SDL_Renderer* renderer, const std::string& str, const int& xpos, const int& ypos, const SDL_Color& color, const unsigned& maxtext, const bool& limit) {
 	if (str.empty()) return;
 	SDL_Surface* surfaceMsg = TTF_RenderText_Solid(font, str.c_str(), color);
 	if (surfaceMsg == NULL) {
@@ -39,10 +39,10 @@ void drawString(SDL_Renderer* renderer, const std::string str, const int xpos, c
 	src_rect.w = surfaceMsg->w;
 	src_rect.h = surfaceMsg->h;
 
-	if (limit && (str.length() > MAXTEXT)) {
-		src_rect.w = FONTWIDTH * MAXTEXT;									// max length
+	if (limit && (str.length() > maxtext)) {
+		src_rect.w = FONTWIDTH * maxtext;									// max length
 		dst_rect.w = float(src_rect.w);
-		src_rect.x = int(str.length() - MAXTEXT) * FONTWIDTH;				// shift
+		src_rect.x = int(str.length() - maxtext) * FONTWIDTH;				// shift
 	}
 
 	SDL_RenderCopyF(renderer, msg, &src_rect, &dst_rect);

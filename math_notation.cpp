@@ -1,5 +1,15 @@
 #include "math_notation.hpp"
 
+/* errors: 
+*	- need to handle expressions with = 'inf' and '-inf'
+*		-> clear expression of inf when user hits button
+* 
+*	- seperate negate and subtraction operator
+*		- rewrite negate function
+*   - 0.1 + .1 = 1.1
+*		- .1 + .1 = 2
+*/
+
 void leftParaPressEvent(const Button& button) {
 	std::string expr = App::getApp()->getTextInput();
 
@@ -46,13 +56,14 @@ void xPressEvent(const Button& button) {
 	App::getApp()->setTextInput(expr + 'x');
 }
 
-//0+000000
+//-00000
+//5-0000000
+// ? missing x*0
 void zeroPressEvent(const Button& button) {
 	std::string expr = App::getApp()->getTextInput();
 	unsigned num = 0;
+	bool hasNum = true;
 	size_t i = expr.length();
-
-	// ? missing x*0
 
 	if (!expr.empty()) {				//get num, the number that is furthest right in expr
 		while (i > 0) {
@@ -61,18 +72,25 @@ void zeroPressEvent(const Button& button) {
 				num *= 10;
 				num += unsigned(expr.at(i) - '0');
 			}
-			else break;
+			else {
+				hasNum = false;
+				break;
+			}
 		}
 	}
-
+	
 	// i: is at a pos of encountering the first non-number
-
-	if (expr.empty()					// allow "0"
-		|| num != 0						// dont allow "00"
-		|| expr.back() == '.'			// allow ".0"
-		|| expr.at(i) == '.'			// allow "123.10"
-		|| isOperator(expr.at(i))		// allow "1+1230"
-		|| expr.at(i) == '(') {			// allow "123+(0)"
+	if (!expr.empty() && expr.back() == 'x') {
+		App::getApp()->setTextInput(expr + "*0");
+	}
+	else if (expr.empty()											// allow "0"
+		|| num != 0												// dont allow "00"
+		|| expr.back() == '.'									// allow ".0"
+		|| expr.at(i) == '.'									// allow "123.10"
+		|| isOperator(expr.at(i))								// allow "1+1230"
+		|| (isOperator(expr.at(i) && !hasNum && num == 0))		// ^ disallow "1+000"
+		|| expr.at(i) == '(')									// allow "123+(0)"
+	{
 		App::getApp()->setTextInput(expr + '0');
 	}
 }
@@ -82,8 +100,9 @@ void numberPressEvent(const Button& button) {
 	size_t i = expr.length();
 	unsigned num = 0;
 
-	if (!expr.empty() && expr.back() == 'x') {
+	if (!expr.empty() && (expr.back() == 'x' || expr.back() == ')')) {
 		expr += '*';
+		std::cout << "A";
 	}
 	else if (!expr.empty() && expr.back() == '0') {			// get number on right, if it's '0' (without a decimal), then replace the zero
 		while (i > 0) {
@@ -94,9 +113,9 @@ void numberPressEvent(const Button& button) {
 			}
 			else break;
 		}
-	}
-	else if (!expr.empty() && num == 0) {
-		expr.erase(i, 1);
+		if (!expr.empty() && num == 0 && i < expr.length() && expr.at(i) != '.') {
+			expr.erase(i, 1);
+		}
 	}
 
 	App::getApp()->setTextInput(expr + button.getText());
@@ -140,12 +159,14 @@ void operatorPressEvent(const Button& button) {
 
 void equalPressEvent(const Button& button) {
 	std::string expr = App::getApp()->getTextInput();
+	App::getApp()->setInputHistory(expr + '=');
 
 	if (expr.find('x') != std::string::npos) {	// if equation has a x variable, graph it
-		App::getApp()->getGrid()->drawFunction(App::getApp()->renderer, expr);
+		App::getApp()->getGrid()->drawFunction(Window::getWindow()->_renderer, expr);
 	}
 	else {										// if no x then just evaluate expression
-		App::getApp()->setTextInput( removeTrailingDigits( std::to_string( evaluatePostfix( infixToPostfix(	App::getApp()->getTextInput())))));
+		expr = removeTrailingDigits(std::to_string(evaluatePostfix(infixToPostfix(expr))));
+		App::getApp()->setTextInput(expr);
 	}
 }
 
@@ -155,20 +176,21 @@ void CEPressEvent(const Button& button) {
 
 void clearPressEvent(const Button& button) {
 	App::getApp()->setTextInput("");
+	App::getApp()->setInputHistory("");
 }
 
 void backPressEvent(const Button& button) {
 	std::string expr = App::getApp()->getTextInput();
 
-	if (!expr.empty()) {
+	if (!expr.empty() && (expr == "inf" || expr == "-inf" || expr == "-nan(ind)" || expr == "nan(ind)")) {
+		App::getApp()->setTextInput("");
+	}
+	else if (!expr.empty()) {
 		expr = expr.erase(expr.length() - 1);
 		App::getApp()->setTextInput(expr);
 	}
 }
 
-//solution is to use another operator for negate: '~'
-//error: 123.2 then - get number in from of . and insert -
-//error: expr = '0.000' input = '~' output = 0-.000
 void negatePressEvent(const Button& button) {
 	std::string expr = App::getApp()->getTextInput();
 	unsigned num = 0;
@@ -180,8 +202,7 @@ void negatePressEvent(const Button& button) {
 			if (isOperator(expr.at(i))) break;		//find closest operator
 		}
 
-		if ((i > 1 && expr.at(i) == '-') &&
-			((isOperator(expr.at(i - 1)) && expr.at(i - 1) != '-') || (expr.at(i-1) == '('))) {	//last operator is negative, 2nd last isnt negative
+		if ((i > 1 && expr.at(i) == '-') &&	((isOperator(expr.at(i - 1)) && expr.at(i - 1) != '-') || (expr.at(i-1) == '('))) {	//last operator is negative, 2nd last isnt negative
 			expr.erase(i, 1);
 		}
 		else if (i > 0 && expr.at(i) == '-') {		//last operator is negative
@@ -203,7 +224,12 @@ void negatePressEvent(const Button& button) {
 			}
 			expr.insert(i, 1, '-');
 		}
-		else expr.insert(i + 1, 1, '-');
+		else {
+			if (isOperator(expr.at(i))) {
+				expr.insert(i + 1, 1, '-');
+			}
+			else expr.insert(i, 1, '-');
+		}
 
 		App::getApp()->setTextInput(expr);
 	}

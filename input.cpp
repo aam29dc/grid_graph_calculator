@@ -38,6 +38,12 @@ bool Input::update() {
 		case SDL_KEYDOWN:
 			_keyStates = SDL_GetKeyboardState(&_numkeys);
 			break;
+		case SDL_WINDOWEVENT:
+			Window::getWindow()->handleWindowEvent(event);
+			if (Window::getWindow()->_quit == true) {
+				return true;
+			}
+			break;
 		case SDL_QUIT:
 			return true;
 			break;
@@ -48,7 +54,7 @@ bool Input::update() {
 	return false;
 }
 
-void Input::onMouseButtonDown(SDL_Event event) {
+void Input::onMouseButtonDown(const SDL_Event& event) {
 	if (event.button.button == SDL_BUTTON_LEFT)	{
 		_mouseButtonStates[LEFT] = true;
 	}
@@ -60,7 +66,7 @@ void Input::onMouseButtonDown(SDL_Event event) {
 	}
 }
 
-void Input::onMouseButtonUp(SDL_Event event)
+void Input::onMouseButtonUp(const SDL_Event& event)
 {
 	if (event.button.button == SDL_BUTTON_LEFT)	{
 		_mouseButtonStates[LEFT] = false;
@@ -73,12 +79,12 @@ void Input::onMouseButtonUp(SDL_Event event)
 	}
 }
 
-void Input::onMouseMotion(SDL_Event event) {
+void Input::onMouseMotion(const SDL_Event& event) {
 	_mPos.x = event.motion.x;
 	_mPos.y = event.motion.y;
 }
 
-bool Input::isKeyDown(SDL_Scancode key) const {
+bool Input::isKeyDown(const SDL_Scancode& key) const {
 	if (_keyStates != 0 && _keyStates[key] == 1) {
 		return true;
 	}
@@ -87,17 +93,17 @@ bool Input::isKeyDown(SDL_Scancode key) const {
 
 /* registers a 'release' when prev key state is 0, then current key state is 1 (rather than the other way around, as to register when the key is hit)
 */
-bool Input::isKeyReleased(SDL_Scancode key) const {
+bool Input::isKeyReleased(const SDL_Scancode& key) const {
 	if (_keyStates != 0 && _prevKeyStates != 0 && _prevKeyStates[key] == 0 && _keyStates[key] == 1) return true;
 	return false;
 }
 
-bool Input::isMouseKeyReleased(const int buttonNumber) const {
+bool Input::isMouseKeyReleased(const int& buttonNumber) const {
 	if(_prevMouseButtonStates[buttonNumber] == 1 && _mouseButtonStates[buttonNumber] == 0) return true;
 	return false;
 }
 
-bool Input::getMouseButtonState(const int buttonNumber) const {
+bool Input::getMouseButtonState(const int& buttonNumber) const {
 	return _mouseButtonStates[buttonNumber];
 }
 

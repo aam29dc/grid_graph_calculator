@@ -8,10 +8,10 @@
 
 extern std::map<std::string, std::any> variables;
 
-void readConfigFile(const std::string loc);
+void readConfigFile(const std::string& loc);
 	
 void initVariableMap();
 
-void setVariable(std::string var, std::any val);
+void setVariable(std::string& var, std::any& val);
 
 #endif

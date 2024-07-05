@@ -5,7 +5,7 @@ std::map<std::string, std::any> variables;
 /*
 	"width=500;height=400;"
 */
-void readConfigFile(const std::string loc) {
+void readConfigFile(const std::string& loc) {
 	std::ifstream file;
 	file.open(loc);
 	if (file.is_open()) {
@@ -30,7 +30,7 @@ void initVariableMap() {
 	*/
 }
 
-void setVariable(std::string var, std::any val) {
+void setVariable(std::string& var, std::any& val) {
 	if (variables.find(var) == variables.end()) {
 		//std::cout << "Unknown variable: " << var << ". ";
 		return;

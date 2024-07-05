@@ -10,18 +10,9 @@
 #include "font.hpp"
 
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
 
-inline extern const unsigned int SCREEN_WIDTH = 640;
-inline extern const unsigned int SCREEN_HEIGHT = 320;
 inline extern const unsigned int NUM_BUTTONS = 24;
-inline extern const unsigned int KEYPAD_OFFSET_X = 320+100;
-inline extern const unsigned int KEYPAD_OFFSET_Y = 120;
 inline extern const unsigned int KEYPAD_COLS = 4;
-inline extern const unsigned int TEXTFIELD_OFFSET_X = (SCREEN_WIDTH/2) + 2;
-inline extern const unsigned int TEXTFIELD_OFFSET_Y = 32;
-inline extern const unsigned int TEXTFIELD_WIDTH = 320-3;
 
 class App {
 private:
@@ -29,26 +20,28 @@ private:
 
 	class Grid* _grid;
 
-	unsigned int _height;
-	unsigned int _width;
-
-	static class Button keypad[NUM_BUTTONS];
+	static class Button _keypad[NUM_BUTTONS];
 
 	Uint32 _startTime;
 
+	std::string _inputHistory;
 	std::string _textInput;
 	SDL_Color _textInputColor;
 
-	void drawTextField() const;
+	unsigned int TEXTFIELD_OFFSET_X;
+	unsigned int TEXTFIELD_OFFSET_Y;
+	unsigned int TEXTFIELD_WIDTH;
+	int KEYPAD_OFFSET_X;
+	int KEYPAD_OFFSET_Y;
+
+	void _drawTextField(SDL_Renderer* renderer) const;
 
 	SDL_Color _bgColor;
 
-	std::map<char, int> _keymap;
+	std::map<int, char> _keymap;
+	int _findKey(const char& ch) const;
 	void _setupKeypad();
 public:
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-
 	App();
 	~App();
 
@@ -56,20 +49,17 @@ public:
 
 	Grid* getGrid() const;
 
-	int init(unsigned int width = SCREEN_WIDTH, unsigned int height = SCREEN_HEIGHT);
 	bool handleEvents();
 	void update();
-	void render();
+	void render(SDL_Renderer* renderer);
 
-	void writeScreenshot() const;
+	void writeScreenshot(SDL_Renderer* renderer) const;
 
-	unsigned int getHeight() const;
-	unsigned int getWidth() const;
 	std::string getTextInput() const;
+	std::string getInputHistory() const;
 
-	void setHeight(const unsigned int val);
-	void setWidth(const unsigned int val);
-	void setTextInput(std::string text);
+	void setTextInput(const std::string& text);
+	void setInputHistory(const std::string& text);
 };
 
 #endif

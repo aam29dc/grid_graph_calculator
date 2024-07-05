@@ -28,18 +28,20 @@ private:
 	void(*_callback)(const Button & button);
 
 public:
-	Button(const std::string text = " ", const int w = 32, const int h = 32, const int x = 0, const int y = 0);
+	Button(const std::string& text = " ", const int& w = 32, const int& h = 32, const int& x = 0, const int& y = 0);
 	~Button();
 
-	void draw(SDL_Renderer* renderer) const;
+	void draw(SDL_Renderer* renderer, const int& xoffset = 0, const int& yoffset = 0) const;
 	void callback() const;
 
-	void setHover(const bool val);
-	void setClick(const bool val);
-	void setCallback(void(*callback)(const Button & button));
-	void setText(const std::string text);
-	void setPosX(const int x);
-	void setPosY(const int y);
+	void setHover(const bool& val);
+	void setClick(const bool& val);
+	void setCallback(void(*callback)(const Button& button));
+	void setText(const std::string& text);
+	void setPosX(const int& x);
+	void setPosY(const int& y);
+	void setHeight(const int& height);
+	void setWidth(const int& width);
 	int getWidth() const;
 	int getHeight() const;
 	int getPosX() const;

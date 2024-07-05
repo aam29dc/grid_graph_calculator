@@ -16,21 +16,18 @@ auto main() -> int {
 	std::cout << (infixToPostfix("0.00001+0.00001-0.00001")) << "\n";
 	std::cout << (infixToPostfix("9999.999901/2/2")) << "\n";*/
 
+	Window::getWindow();
 
 	readConfigFile("assets/config.cfg");
 
-
 	//App::getApp()->init(std::any_cast<int>(variables["width"]), std::any_cast<int>(variables["height"]));
-	if (!App::getApp()->init()) {
-		std::cout << "App could not init\n";
-		return 0;
-	}
+	App::getApp();
 	bool quit = false;
 
 	while (!quit) {
 		quit = App::getApp()->handleEvents();
 		App::getApp()->update();
-		App::getApp()->render();
+		App::getApp()->render(Window::getWindow()->_renderer);
 	}
 
 	//App::getApp()->getGrid()->drawFunction(App::getApp()->renderer, "2*x");

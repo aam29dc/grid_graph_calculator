@@ -1,6 +1,6 @@
 #include "button.hpp"
 
-Button::Button(const std::string text, const int w, const int h, const int x, const int y) {
+Button::Button(const std::string& text, const int& w, const int& h, const int& x, const int& y) {
 	_width = w;
 	_height = h;
 	_posx = x;
@@ -26,13 +26,13 @@ std::string Button::getText() const {
 	return _text;
 }
 
-void Button::draw(SDL_Renderer* renderer) const {
+void Button::draw(SDL_Renderer* renderer, const int& xoffset, const int& yoffset) const {
 	SDL_FRect rect = { 0 };
 
-	rect.x = (float)(_posx);
-	rect.y = (float)(_posy);
-	rect.w = (float)_width;
-	rect.h = (float)_height;
+	rect.x = (float)(_posx + xoffset);
+	rect.y = (float)(_posy + yoffset);
+	rect.w = (float)(32);
+	rect.h = (float)(32);
 
 	SDL_Color color = {0};
 
@@ -44,7 +44,7 @@ void Button::draw(SDL_Renderer* renderer) const {
 	SDL_RenderFillRectF(renderer, &rect);
 
 	if (_text != " " && !_text.empty()) {
-		drawString(renderer, _text, _posx + int(TEXTSIZE / 2.0f), _posy + int(TEXTSIZE / 4.0f), _textColor);
+		drawString(renderer, _text, _posx + xoffset + int(TEXTSIZE / 2.0f), _posy + yoffset + int(TEXTSIZE / 4.0f), _textColor);
 	}
 
 	color = getOutlineColor();
@@ -61,15 +61,15 @@ bool Button::getClick() const {
 	return _click;
 }
 
-void Button::setText(const std::string text) {
+void Button::setText(const std::string& text) {
 	_text = text;
 }
 
-void Button::setPosX(const int x) {
+void Button::setPosX(const int& x) {
 	_posx = x;
 }
 
-void Button::setPosY(const int y) {
+void Button::setPosY(const int& y) {
 	_posy = y;
 }
 
@@ -105,10 +105,18 @@ int Button::getPosY() const {
 	return _posy;
 }
 
-void Button::setHover(const bool val) {
+void Button::setHover(const bool& val) {
 	_hover = val;
 }
 
-void Button::setClick(const bool val) {
+void Button::setClick(const bool& val) {
 	_click = val;
+}
+
+void Button::setHeight(const int& height) {
+	_height = height;
+}
+
+void Button::setWidth(const int& width) {
+	_width = width;
 }

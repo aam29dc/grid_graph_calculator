@@ -1,12 +1,12 @@
 #include "expression.hpp"
 
-int parity(const float & num) {
+int parity(const float& num) {
 	if (num < 0) return -1;
 	else if (num > 0) return 1;
 	else return 0;
 }
 
-std::string removeTrailingDigits(std::string fnum, const char & ch) {
+std::string removeTrailingDigits(std::string fnum, const char& ch) {
 	//fnum is a float, 1.123001000 has 3 trailing 0's
 	unsigned int chars = 0;
 	size_t pos = 0;
@@ -32,7 +32,7 @@ std::string removeTrailingDigits(std::string fnum, const char & ch) {
 	return fnum;
 }
 
-std::string substitute(std::string expr, const char & var, const float & val) {
+std::string substitute(std::string expr, const char& var, const float& val) {
 	std::string val_str = removeTrailingDigits(std::to_string(val), '0');
 
 	//remove the . from 123. when no number is after.
@@ -47,7 +47,7 @@ std::string substitute(std::string expr, const char & var, const float & val) {
 	return expr;
 }
 
-unsigned int preced(const char & ch) {
+unsigned int preced(const char& ch) {
 	switch (ch) {
 	case '^':
 		return 3;
@@ -65,7 +65,7 @@ bool isNumber(const char& ch) {
 	return (ch >= '0' && ch <= '9');
 }
 
-bool isOperator(const char & ch) {
+bool isOperator(const char& ch) {
 	switch (ch) {
 	case '-':case '+':case '*':case '/':case '^':case '%':
 		return true;
@@ -75,7 +75,46 @@ bool isOperator(const char & ch) {
 	return false;
 }
 
-std::string infixToPostfix(const std::string expr) {
+std::string convertUnaryToBinary(const std::string& expr) {
+	std::string result = expr;
+
+	unsigned leftPara = 0;
+	unsigned rightPara = 0;
+
+	// replace '-x' with '(0-x)', '1*-(x)' with '1*(0-(x))
+	for (size_t i = 1; i < result.length(); i++) {
+		if (isOperator(result.at(i - 1)) && result.at(i) == '-') {
+			//insert LHS '(0'
+			result.insert(i, "(0");
+			i += 2;
+			//get RHS pos of number
+			while (i < result.length() - 1) {
+				i++;
+				if (isOperator(result.at(i))) {
+					i--;
+					break;
+				}
+
+				//either starts with a left para or not
+				if (result.at(i) == '(') {
+					leftPara++;
+					while (leftPara > rightPara) {
+						i++;
+						if (result.at(i) == ')') rightPara++;
+						else if (result.at(i) == '(') leftPara++;
+					}
+				}
+				//i is at the end of RHS
+			}
+			// i is at end of our number
+			i += 1;
+			result.insert(i, ")");
+		}
+	}
+	return result;
+}
+
+std::string infixToPostfix(const std::string& expr) {
 	std::stack<char> ops;
 	std::string postfix;
 
@@ -97,7 +136,7 @@ std::string infixToPostfix(const std::string expr) {
 			ops.push(expr.at(i));
 		}
 		//if scan operator, and scanned operator is lower or equal precedence than top of stack
-		else if (!ops.empty() && isOperator(expr.at(i)) && (preced(expr.at(i)) < preced(ops.top()))) {
+		else if (!ops.empty() && isOperator(expr.at(i)) && (preced(expr.at(i)) <= preced(ops.top()))) {
 			// then pop operator to expr, and push scanned operator to top of stack
 			postfix += ops.top();
 			ops.pop();
@@ -127,7 +166,7 @@ std::string infixToPostfix(const std::string expr) {
 	return postfix;
 }
 
-float evaluatePostfix(const std::string expr) {
+float evaluatePostfix(const std::string& expr) {
 	std::stack<float> nums;
 	float num = 0.0f;
 	float dec = 0.0f;

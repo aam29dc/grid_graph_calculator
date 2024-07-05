@@ -2,22 +2,38 @@
 
 App* App::_app = nullptr;
 
-class Button App::keypad[NUM_BUTTONS];
+class Button App::_keypad[NUM_BUTTONS];
 
-/*
-	App is defined within a 640x320 window,
-	origin is top left corner
-*/
 App::App() {
-	_width = SCREEN_WIDTH;
-	_height = SCREEN_HEIGHT;
-	window = nullptr;
-	renderer = nullptr;
 	_grid = new Grid();
     _startTime = 0;
 	_textInput = "";
-	_textInputColor = { 0,0,0,255 };
+	_inputHistory = "";
+	_textInputColor = { 0, 0, 0, 255 };
 	_bgColor = { 0, 0, 0, 255 };
+	TEXTFIELD_OFFSET_X = (Window::getWindow()->_width / 2);
+	TEXTFIELD_OFFSET_Y = 32;
+	TEXTFIELD_WIDTH = (Window::getWindow()->_width / 2);
+	KEYPAD_OFFSET_X = 0;
+	KEYPAD_OFFSET_Y = 0;
+	_setupKeypad();
+}
+
+App::~App() {
+	delete _grid;
+	_grid = nullptr;
+}
+
+App* App::getApp() {
+	if (_app == nullptr) _app = new App();
+	return _app;
+}
+
+void App::setInputHistory(const std::string& text) {
+	_inputHistory = text;
+}
+
+void App::_setupKeypad() {
 	_keymap[0] = '(';
 	_keymap[1] = ')';
 	_keymap[2] = 'x';
@@ -42,76 +58,26 @@ App::App() {
 	_keymap[21] = '0';
 	_keymap[22] = '.';
 	_keymap[23] = '=';
-}
 
-App::~App() {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    TTF_Quit();
-    IMG_Quit();
-    SDL_Quit();
-	delete _grid;
-	window = nullptr;
-	renderer = nullptr;
-	_grid = nullptr;
-}
-
-App* App::getApp() {
-	if (_app == nullptr) _app = new App();
-	return _app;
-}
-
-int App::init(unsigned int width, unsigned int height) {
-	_width = width;
-	_height = height;
-	int errorFlags = 1;
-
-	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0) {
-		window = SDL_CreateWindow("SDL2 Grapher", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _width, _height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-			//std::cout << "Warning: Linear texture filtering not enabled!" << "\n";
-			errorFlags = -2;
-		}
-
-		if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-			//std::cout << "SDL_image could not initialize! SDL_image Error :" << IMG_GetError() << "\n";
-			errorFlags -= 4;
-		}
-
-		if (!initFont()) {
-			//std::cout << "Init font error SDL_ttf: " << TTF_GetError() << "\n";
-			errorFlags -= 8;
-		}
-
-		//SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
-
-		_setupKeypad();
-	}
-	else errorFlags = -1;
-
-	return errorFlags;
-}
-
-void App::_setupKeypad() {
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-		keypad[i].setText(std::string(1, _keymap[i]));
-		keypad[i].setPosX((33 * (i % KEYPAD_COLS)) + KEYPAD_OFFSET_X);
-		keypad[i].setPosY((33 * int(i / KEYPAD_COLS)) + KEYPAD_OFFSET_Y);
+		_keypad[i].setText(std::string(1, _keymap[i]));
+		_keypad[i].setPosX(((Window::getWindow()->_height / 10) * (i % KEYPAD_COLS)));
+		_keypad[i].setPosY(((Window::getWindow()->_height / 10) * int(i / KEYPAD_COLS)));
+		_keypad[i].setHeight(32);
+		_keypad[i].setWidth(32);
 
-		if (isNumber(_keymap[i])) keypad[i].setCallback(numberPressEvent);
-		else if (isOperator(_keymap[i])) keypad[i].setCallback(operatorPressEvent);
-		else if (_keymap[i] == '(') keypad[i].setCallback(leftParaPressEvent);
-		else if (_keymap[i] == ')') keypad[i].setCallback(rightParaPressEvent);
-		else if (_keymap[i] == 'x') keypad[i].setCallback(xPressEvent);
-		else if (_keymap[i] == 'c') keypad[i].setCallback(clearPressEvent);
-		else if (_keymap[i] == 'C') keypad[i].setCallback(clearPressEvent);
-		else if (_keymap[i] == 'B') keypad[i].setCallback(backPressEvent);
-		else if (_keymap[i] == '~') keypad[i].setCallback(negatePressEvent);
-		else if (_keymap[i] == '0') keypad[i].setCallback(zeroPressEvent);
-		else if (_keymap[i] == '.') keypad[i].setCallback(decimalPressEvent);
-		else if (_keymap[i] == '=') keypad[i].setCallback(equalPressEvent);
+		if (_keymap[i] == '0') _keypad[i].setCallback(zeroPressEvent);
+		else if (isNumber(_keymap[i])) _keypad[i].setCallback(numberPressEvent);
+		else if (isOperator(_keymap[i])) _keypad[i].setCallback(operatorPressEvent);
+		else if (_keymap[i] == '(') _keypad[i].setCallback(leftParaPressEvent);
+		else if (_keymap[i] == ')') _keypad[i].setCallback(rightParaPressEvent);
+		else if (_keymap[i] == 'x') _keypad[i].setCallback(xPressEvent);
+		else if (_keymap[i] == 'c') _keypad[i].setCallback(CEPressEvent);
+		else if (_keymap[i] == 'C') _keypad[i].setCallback(clearPressEvent);
+		else if (_keymap[i] == 'B') _keypad[i].setCallback(backPressEvent);
+		else if (_keymap[i] == '~') _keypad[i].setCallback(negatePressEvent);
+		else if (_keymap[i] == '.') _keypad[i].setCallback(decimalPressEvent);
+		else if (_keymap[i] == '=') _keypad[i].setCallback(equalPressEvent);
 	}
 }
 
@@ -119,19 +85,28 @@ Grid* App::getGrid() const {
 	return _grid;
 }
 
-void App::writeScreenshot() const {
-	SDL_Surface* sshot = SDL_CreateRGBSurfaceWithFormat(0, _width, _height, 24, SDL_PIXELFORMAT_RGB24);
+void App::writeScreenshot(SDL_Renderer* renderer) const {
+	SDL_Surface* sshot = SDL_CreateRGBSurfaceWithFormat(0, Window::getWindow()->_width, Window::getWindow()->_height, 24, SDL_PIXELFORMAT_RGB24);
 	SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB24, sshot->pixels, sshot->pitch);
 	//this only saves 1 screenshot for now...
 	SDL_SaveBMP(sshot, "screenshots/filename.bmp");
 	SDL_FreeSurface(sshot);
 }
 
+int App::_findKey(const char& ch) const {
+	for (auto it = _keymap.begin(); it != _keymap.end(); ++it) {
+		if (it->second == ch) return it->first;
+	}
+	return -1;
+}
+
 bool App::handleEvents() {
 	Input::getInputHandler()->updatePrevKeyStates();
-	Input::getInputHandler()->update();
+	if (Input::getInputHandler()->update() == true) {	//return bool handles window exit
+		return true;
+	}
 
-	/*if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_UP)) {
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_UP)) {
 		_grid->setShifty(_grid->getShifty() + 0.1f);
 	}	//cant move up and down at sametime
 	else if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_DOWN)) {
@@ -145,29 +120,56 @@ bool App::handleEvents() {
 		_grid->setShiftx(_grid->getShiftx() + 0.1f);
 	}
 
-	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_EQUALS)) {
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_F1)) {
 		_grid->setZoom(_grid->getZoom() + 0.1f);
 	}	//cant move zoom in and out at sametime
-	else if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_MINUS)) {
+	else if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_F2)) {
 		_grid->setZoom(_grid->getZoom() - 0.1f);
-	}*/
+	}
 
-	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_1)) {
-		keypad[16].callback();
-	}
-	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_2)) {
-		keypad[17].callback();
-	}
-	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_3)) {
-		keypad[18].callback();
-	}
-	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_3)) {
-		keypad[19].callback();
-	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_O)) {
 		_grid->setShiftx(0.0f);
 		_grid->setShifty(0.0f);
 		_grid->setZoom(1.0f);
+	}
+
+	for (int i = 1; i < 10; i++) {
+		if (Input::getInputHandler()->isKeyReleased(SDL_Scancode(SDL_SCANCODE_1 + i - 1))) {
+			_keypad[_findKey(i + '0')].callback();
+		}
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_0)) {
+		_keypad[_findKey('0')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_MINUS)) {
+		_keypad[_findKey('-')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_KP_PLUS)) {
+		_keypad[_findKey('+')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_EQUALS)) {
+		_keypad[_findKey('=')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_LEFTBRACKET)) {
+		_keypad[_findKey('(')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_RIGHTBRACKET)) {
+		_keypad[_findKey(')')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_X)) {
+		_keypad[_findKey('x')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_PERIOD)) {
+		_keypad[_findKey('.')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_KP_DIVIDE)) {
+		_keypad[_findKey('/')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_GRAVE)) {
+		_keypad[_findKey('~')].callback();
+	}
+	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_0)) {
+		_keypad[_findKey('0')].callback();
 	}
 	if (Input::getInputHandler()->isKeyDown(SDL_SCANCODE_ESCAPE)) {
 		return true;
@@ -178,44 +180,57 @@ bool App::handleEvents() {
 void App::update() {
 	SDL_Point mpos = Input::getInputHandler()->getMousePosition();
 
-	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
-		if ((mpos.x > keypad[i].getPosX() && mpos.x < keypad[i].getPosX() + keypad[i].getHeight()) 
-			&& (mpos.y > keypad[i].getPosY() && mpos.y < keypad[i].getPosY() + keypad[i].getHeight())) {
+	getGrid()->setHeight(Window::getWindow()->_height);
+	getGrid()->setWidth(Window::getWindow()->_width / 2);
+	TEXTFIELD_OFFSET_X = (Window::getWindow()->_width / 2);
+	TEXTFIELD_OFFSET_Y = 32;
+	TEXTFIELD_WIDTH = (Window::getWindow()->_width / 2);
+	KEYPAD_OFFSET_X = (Window::getWindow()->_width / 2) + (Window::getWindow()->_width / 8);
+	KEYPAD_OFFSET_Y = (Window::getWindow()->_height / 4);
 
-			keypad[i].setHover(true);
+	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
+		_keypad[i].setWidth(32);
+		_keypad[i].setHeight(32);
+
+		if ((mpos.x > _keypad[i].getPosX() + KEYPAD_OFFSET_X && mpos.x < _keypad[i].getPosX() + _keypad[i].getWidth() + KEYPAD_OFFSET_X)
+			&& (mpos.y > _keypad[i].getPosY() + KEYPAD_OFFSET_Y && mpos.y < _keypad[i].getPosY() + _keypad[i].getHeight() + KEYPAD_OFFSET_Y)) {
+
+			_keypad[i].setHover(true);
 
 			if (Input::getInputHandler()->isMouseKeyReleased(mouse_buttons::LEFT)) {
-				keypad[i].setClick(true);
+				_keypad[i].setClick(true);
 			}
-			else keypad[i].setClick(false);
+			else _keypad[i].setClick(false);
 		}
-		else keypad[i].setHover(false);
+		else _keypad[i].setHover(false);
 	}
 
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-		if (keypad[i].getClick() == true) {
-			keypad[i].callback();
+		if (_keypad[i].getClick() == true) {
+			_keypad[i].callback();
 		}
 	}
-
 }
 
-void App::render() {
+void App::render(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, _bgColor.r, _bgColor.g, _bgColor.b, _bgColor.a);
 	SDL_RenderClear(renderer);
 
 	_grid->draw(renderer);
+	if (!_textInput.empty() && _textInput.find('x') != std::string::npos && !isOperator(_textInput.back())) {
+		_grid->drawFunction(renderer, _textInput);
+	}
 
-	drawTextField();
+	_drawTextField(renderer);
 
-	//keypad
+	//_keypad
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-		keypad[i].draw(renderer);
+		_keypad[i].draw(renderer, KEYPAD_OFFSET_X, KEYPAD_OFFSET_Y);
 	}
 	SDL_RenderPresent(renderer);
 }
 
-void App::drawTextField() const {
+void App::_drawTextField(SDL_Renderer* renderer) const {
 	//draw expression field
 	SDL_Rect rec = { 0 };
 	rec.x = TEXTFIELD_OFFSET_X;
@@ -228,30 +243,18 @@ void App::drawTextField() const {
 	SDL_SetRenderDrawColor(renderer, 155, 155, 155, 255);
 	SDL_RenderDrawRect(renderer, &rec);
 
-	drawString(renderer, _textInput, TEXTFIELD_OFFSET_X, TEXTFIELD_OFFSET_Y, _textInputColor, true);
+	drawString(renderer, _textInput, TEXTFIELD_OFFSET_X, TEXTFIELD_OFFSET_Y, _textInputColor, Window::getWindow()->_width / 26, true);
+	drawString(renderer, _inputHistory, TEXTFIELD_OFFSET_X, 0, {255,255,255,255}, Window::getWindow()->_width / 26, true);
 }
 
 std::string App::getTextInput() const {
 	return _textInput;
 }
 
+std::string App::getInputHistory() const {
+	return _inputHistory;
+}
 
-void App::setTextInput(std::string text) {
+void App::setTextInput(const std::string& text) {
 	_textInput = text;
-}
-
-unsigned int App::getHeight() const {
-	return _height;
-}
-
-unsigned int App::getWidth() const {
-	return _width;
-}
-
-void App::setHeight(const unsigned int val) {
-	_height = val;
-}
-
-void App::setWidth(const unsigned int val) {
-	_width = val;
 }

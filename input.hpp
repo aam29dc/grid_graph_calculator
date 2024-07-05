@@ -3,9 +3,9 @@
 
 #include <SDL.h>
 #include <vector>
+#include "window.hpp"
 
-enum mouse_buttons
-{
+enum mouse_buttons {
 	LEFT = 0,
 	MIDDLE = 1,
 	RIGHT = 2
@@ -19,24 +19,24 @@ private:
 	std::vector<bool> _prevMouseButtonStates;
 
 	SDL_Point _mPos;
+public:
+	void onMouseButtonDown(const SDL_Event& event);
+	void onMouseButtonUp(const SDL_Event& event);
+	void onMouseMotion(const SDL_Event& event);
 
-	int _numkeys;
 	const Uint8* _keyStates;
 	Uint8 _prevKeyStates[SDL_NUM_SCANCODES];
+	int _numkeys;
 
-	void onMouseButtonDown(SDL_Event event);
-	void onMouseButtonUp(SDL_Event event);
-	void onMouseMotion(SDL_Event event);
-public:
 	Input();
 	static Input* getInputHandler();
 	void updatePrevKeyStates();
 	bool update();
-	bool getMouseButtonState(const int buttonNumber) const;
+	bool getMouseButtonState(const int& buttonNumber) const;
 	SDL_Point getMousePosition() const;
-	bool isKeyDown(SDL_Scancode event) const;
-	bool isKeyReleased(SDL_Scancode key) const;
-	bool isMouseKeyReleased(const int buttonNumber) const;
+	bool isKeyDown(const SDL_Scancode& key) const;
+	bool isKeyReleased(const SDL_Scancode& key) const;
+	bool isMouseKeyReleased(const int& buttonNumber) const;
 };
 
 #endif
