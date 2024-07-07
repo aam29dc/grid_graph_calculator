@@ -28,19 +28,18 @@ private:
 	std::string _textInput;
 	SDL_Color _textInputColor;
 
-	unsigned int TEXTFIELD_OFFSET_X;
-	unsigned int TEXTFIELD_OFFSET_Y;
-	unsigned int TEXTFIELD_WIDTH;
-	int KEYPAD_OFFSET_X;
-	int KEYPAD_OFFSET_Y;
-
-	void _drawTextField(SDL_Renderer* renderer) const;
+	unsigned int _tf_offset_x;
+	unsigned int _tf_offset_y;
+	unsigned int _tf_width;
+	int _keypad_offset_x;
+	int _keypad_offset_y;
 
 	SDL_Color _bgColor;
 
 	std::map<int, char> _keymap;
 	int _findKey(const char& ch) const;
 	void _setupKeypad();
+	void _drawTextField(SDL_Renderer* renderer) const;
 public:
 	App();
 	~App();

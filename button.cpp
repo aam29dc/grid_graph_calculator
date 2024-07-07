@@ -18,7 +18,7 @@ Button::~Button() {
 	_callback = nullptr;
 }
 
-void Button::setCallback(void(*callback)(const Button& button)) {
+void Button::setCallback(void(*callback)(const char& ch)) {
 	_callback = callback;
 }
 
@@ -54,7 +54,7 @@ void Button::draw(SDL_Renderer* renderer, const int& xoffset, const int& yoffset
 }
 
 void Button::callback() const {
-	_callback(*this);
+	_callback(this->getText().front());
 }
 
 bool Button::getClick() const {

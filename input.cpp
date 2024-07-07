@@ -40,7 +40,7 @@ bool Input::update() {
 			break;
 		case SDL_WINDOWEVENT:
 			Window::getWindow()->handleWindowEvent(event);
-			if (Window::getWindow()->_quit == true) {
+			if (Window::getWindow()->getQuit() == true) {
 				return true;
 			}
 			break;

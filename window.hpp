@@ -12,9 +12,6 @@ inline extern const unsigned int SCREEN_HEIGHT = 320;
 class Window {
 private:
 	static Window* instance;
-public:
-	SDL_Window* _window;
-	SDL_Renderer* _renderer;
 	unsigned int _height;
 	unsigned int _width;
 
@@ -23,6 +20,17 @@ public:
 	bool _fullScreen;
 	bool _minimized;
 	bool _quit;
+public:
+	SDL_Window* _window;
+	SDL_Renderer* _renderer;
+
+	unsigned int getWidth() const;
+	unsigned int getHeight() const;
+	bool getMouseFocus() const;
+	bool getKeyboardFocus() const;
+	bool getFullscreen() const;
+	bool getMinimized() const;
+	bool getQuit() const;
 
 	Window(const unsigned width = SCREEN_WIDTH, const unsigned height = SCREEN_HEIGHT);
 	~Window();

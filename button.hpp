@@ -25,8 +25,7 @@ private:
 
 	std::string _text;
 
-	void(*_callback)(const Button & button);
-
+	void(*_callback)(const char& ch);
 public:
 	Button(const std::string& text = " ", const int& w = 32, const int& h = 32, const int& x = 0, const int& y = 0);
 	~Button();
@@ -36,7 +35,7 @@ public:
 
 	void setHover(const bool& val);
 	void setClick(const bool& val);
-	void setCallback(void(*callback)(const Button& button));
+	void setCallback(void(*callback)(const char& ch));
 	void setText(const std::string& text);
 	void setPosX(const int& x);
 	void setPosY(const int& y);

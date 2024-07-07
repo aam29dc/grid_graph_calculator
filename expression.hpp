@@ -16,7 +16,7 @@ bool isNumber(const char& ch);
 
 std::string infixToPostfix(const std::string& expr);
 
-float evaluatePostfix(const std::string& expr);
+float evaluatePostfix(const std::string& expr, const float& val = 0.0f);
 
 std::string removeTrailingDigits(std::string fnum, const char & ch = '0');
 

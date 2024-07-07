@@ -1,16 +1,6 @@
 #include "math_notation.hpp"
 
-/* errors: 
-*	- need to handle expressions with = 'inf' and '-inf'
-*		-> clear expression of inf when user hits button
-* 
-*	- seperate negate and subtraction operator
-*		- rewrite negate function
-*   - 0.1 + .1 = 1.1
-*		- .1 + .1 = 2
-*/
-
-void leftParaPressEvent(const Button& button) {
+void leftParaPressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 
 	if (!expr.empty() && expr.back() == '.') return;
@@ -20,7 +10,7 @@ void leftParaPressEvent(const Button& button) {
 	App::getApp()->setTextInput(expr + '(');
 }
 
-void rightParaPressEvent(const Button& button) {
+void rightParaPressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 	int leftParas = 0;
 	int rightParas = 1;
@@ -45,7 +35,7 @@ void rightParaPressEvent(const Button& button) {
 	}
 }
 
-void xPressEvent(const Button& button) {
+void xPressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 
 	if (!expr.empty() && expr.back() == '.') return;	// if to the left of the . there is a number, we could insert a * on the right . (123.*x)
@@ -58,8 +48,7 @@ void xPressEvent(const Button& button) {
 
 //-00000
 //5-0000000
-// ? missing x*0
-void zeroPressEvent(const Button& button) {
+void zeroPressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 	unsigned num = 0;
 	bool hasNum = true;
@@ -95,14 +84,13 @@ void zeroPressEvent(const Button& button) {
 	}
 }
 
-void numberPressEvent(const Button& button) {
+void numberPressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 	size_t i = expr.length();
 	unsigned num = 0;
 
 	if (!expr.empty() && (expr.back() == 'x' || expr.back() == ')')) {
 		expr += '*';
-		std::cout << "A";
 	}
 	else if (!expr.empty() && expr.back() == '0') {			// get number on right, if it's '0' (without a decimal), then replace the zero
 		while (i > 0) {
@@ -118,11 +106,11 @@ void numberPressEvent(const Button& button) {
 		}
 	}
 
-	App::getApp()->setTextInput(expr + button.getText());
+	App::getApp()->setTextInput(expr + ch);
 }
 
-// doesn't allow "(5).5" which could be converted to "(5)*.5"
-void decimalPressEvent(const Button& button) {
+// doesn't allow "(5).5" which _could_ be converted to "(5)*.5"
+void decimalPressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 
 	if (!expr.empty() && ((expr.back() == '.' || expr.back() == ')') || expr.back() == 'x')) {
@@ -142,22 +130,22 @@ void decimalPressEvent(const Button& button) {
 	App::getApp()->setTextInput(expr + '.');
 }
 
-void operatorPressEvent(const Button& button) {
+void operatorPressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 
 	if (expr.empty()													// "+" without a number on the left is illegal. (but "-" is legal notation so far)
 		|| (expr.back() == '.' && expr.length() == 1)					// ".+" decimal then operator without a number on the left is illegal
-		|| (expr.back() == '(' && button.getText().front() != '-')) {	// "-(+" is illegal (but "-(-" is legal so far)
+		|| (expr.back() == '(' && ch != '-')) {	// "-(+" is illegal (but "-(-" is legal so far)
 		return;
 	}
 	else if (!expr.empty() && isOperator(expr.back())) {				//overwrite last operator
 		expr.erase(expr.length() - 1, 1);
 	}
 
-	App::getApp()->setTextInput(expr + button.getText());
+	App::getApp()->setTextInput(expr + ch);
 }
 
-void equalPressEvent(const Button& button) {
+void equalPressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 	App::getApp()->setInputHistory(expr + '=');
 
@@ -170,16 +158,16 @@ void equalPressEvent(const Button& button) {
 	}
 }
 
-void CEPressEvent(const Button& button) {
+void CEPressEvent(const char& ch) {
 	App::getApp()->setTextInput("");
 }
 
-void clearPressEvent(const Button& button) {
+void clearPressEvent(const char& ch) {
 	App::getApp()->setTextInput("");
 	App::getApp()->setInputHistory("");
 }
 
-void backPressEvent(const Button& button) {
+void backPressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 
 	if (!expr.empty() && (expr == "inf" || expr == "-inf" || expr == "-nan(ind)" || expr == "nan(ind)")) {
@@ -191,7 +179,7 @@ void backPressEvent(const Button& button) {
 	}
 }
 
-void negatePressEvent(const Button& button) {
+void negatePressEvent(const char& ch) {
 	std::string expr = App::getApp()->getTextInput();
 	unsigned num = 0;
 

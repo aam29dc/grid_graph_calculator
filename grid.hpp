@@ -20,9 +20,9 @@ private:
 	float _offsetx;			// offset within window
 	float _offsety;			// offset within window
 
-	void drawAxisNumbers();
-	void drawAxises(SDL_Renderer* renderer) const;
-	void drawBorder(SDL_Renderer* renderer) const;
+	void _drawAxisNumbers();
+	void _drawAxises(SDL_Renderer* renderer) const;
+	void _drawBorder(SDL_Renderer* renderer) const;
 public:
 	Grid();
 

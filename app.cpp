@@ -11,11 +11,11 @@ App::App() {
 	_inputHistory = "";
 	_textInputColor = { 0, 0, 0, 255 };
 	_bgColor = { 0, 0, 0, 255 };
-	TEXTFIELD_OFFSET_X = (Window::getWindow()->_width / 2);
-	TEXTFIELD_OFFSET_Y = 32;
-	TEXTFIELD_WIDTH = (Window::getWindow()->_width / 2);
-	KEYPAD_OFFSET_X = 0;
-	KEYPAD_OFFSET_Y = 0;
+	_tf_offset_x = (Window::getWindow()->getWidth() / 2);
+	_tf_offset_y = 32;
+	_tf_width = (Window::getWindow()->getWidth() / 2);
+	_keypad_offset_x = 0;
+	_keypad_offset_y = 0;
 	_setupKeypad();
 }
 
@@ -61,17 +61,17 @@ void App::_setupKeypad() {
 
 	for (int i = 0; i < NUM_BUTTONS; i++) {
 		_keypad[i].setText(std::string(1, _keymap[i]));
-		_keypad[i].setPosX(((Window::getWindow()->_height / 10) * (i % KEYPAD_COLS)));
-		_keypad[i].setPosY(((Window::getWindow()->_height / 10) * int(i / KEYPAD_COLS)));
+		_keypad[i].setPosX(((Window::getWindow()->getHeight() / 10) * (i % KEYPAD_COLS)));
+		_keypad[i].setPosY(((Window::getWindow()->getHeight() / 10) * int(i / KEYPAD_COLS)));
 		_keypad[i].setHeight(32);
 		_keypad[i].setWidth(32);
 
 		if (_keymap[i] == '0') _keypad[i].setCallback(zeroPressEvent);
-		else if (isNumber(_keymap[i])) _keypad[i].setCallback(numberPressEvent);
+		else if (_keymap[i] == 'x') _keypad[i].setCallback(xPressEvent);
+		else if (isNumber(_keymap[i]) && _keymap[i] != 'x') _keypad[i].setCallback(numberPressEvent);
 		else if (isOperator(_keymap[i])) _keypad[i].setCallback(operatorPressEvent);
 		else if (_keymap[i] == '(') _keypad[i].setCallback(leftParaPressEvent);
 		else if (_keymap[i] == ')') _keypad[i].setCallback(rightParaPressEvent);
-		else if (_keymap[i] == 'x') _keypad[i].setCallback(xPressEvent);
 		else if (_keymap[i] == 'c') _keypad[i].setCallback(CEPressEvent);
 		else if (_keymap[i] == 'C') _keypad[i].setCallback(clearPressEvent);
 		else if (_keymap[i] == 'B') _keypad[i].setCallback(backPressEvent);
@@ -86,7 +86,7 @@ Grid* App::getGrid() const {
 }
 
 void App::writeScreenshot(SDL_Renderer* renderer) const {
-	SDL_Surface* sshot = SDL_CreateRGBSurfaceWithFormat(0, Window::getWindow()->_width, Window::getWindow()->_height, 24, SDL_PIXELFORMAT_RGB24);
+	SDL_Surface* sshot = SDL_CreateRGBSurfaceWithFormat(0, Window::getWindow()->getWidth(), Window::getWindow()->getHeight(), 24, SDL_PIXELFORMAT_RGB24);
 	SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB24, sshot->pixels, sshot->pitch);
 	//this only saves 1 screenshot for now...
 	SDL_SaveBMP(sshot, "screenshots/filename.bmp");
@@ -180,20 +180,20 @@ bool App::handleEvents() {
 void App::update() {
 	SDL_Point mpos = Input::getInputHandler()->getMousePosition();
 
-	getGrid()->setHeight(Window::getWindow()->_height);
-	getGrid()->setWidth(Window::getWindow()->_width / 2);
-	TEXTFIELD_OFFSET_X = (Window::getWindow()->_width / 2);
-	TEXTFIELD_OFFSET_Y = 32;
-	TEXTFIELD_WIDTH = (Window::getWindow()->_width / 2);
-	KEYPAD_OFFSET_X = (Window::getWindow()->_width / 2) + (Window::getWindow()->_width / 8);
-	KEYPAD_OFFSET_Y = (Window::getWindow()->_height / 4);
+	getGrid()->setHeight(Window::getWindow()->getHeight());
+	getGrid()->setWidth(Window::getWindow()->getWidth() / 2);
+	_tf_offset_x = (Window::getWindow()->getWidth() / 2);
+	_tf_offset_y = 32;
+	_tf_width = (Window::getWindow()->getWidth() / 2);
+	_keypad_offset_x = (Window::getWindow()->getWidth() / 2) + (Window::getWindow()->getWidth() / 8);
+	_keypad_offset_y = (Window::getWindow()->getHeight() / 4);
 
 	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
 		_keypad[i].setWidth(32);
 		_keypad[i].setHeight(32);
 
-		if ((mpos.x > _keypad[i].getPosX() + KEYPAD_OFFSET_X && mpos.x < _keypad[i].getPosX() + _keypad[i].getWidth() + KEYPAD_OFFSET_X)
-			&& (mpos.y > _keypad[i].getPosY() + KEYPAD_OFFSET_Y && mpos.y < _keypad[i].getPosY() + _keypad[i].getHeight() + KEYPAD_OFFSET_Y)) {
+		if ((mpos.x > _keypad[i].getPosX() + _keypad_offset_x && mpos.x < _keypad[i].getPosX() + _keypad[i].getWidth() + _keypad_offset_x)
+			&& (mpos.y > _keypad[i].getPosY() + _keypad_offset_y && mpos.y < _keypad[i].getPosY() + _keypad[i].getHeight() + _keypad_offset_y)) {
 
 			_keypad[i].setHover(true);
 
@@ -225,7 +225,7 @@ void App::render(SDL_Renderer* renderer) {
 
 	//_keypad
 	for (int i = 0; i < NUM_BUTTONS; i++) {
-		_keypad[i].draw(renderer, KEYPAD_OFFSET_X, KEYPAD_OFFSET_Y);
+		_keypad[i].draw(renderer, _keypad_offset_x, _keypad_offset_y);
 	}
 	SDL_RenderPresent(renderer);
 }
@@ -233,9 +233,9 @@ void App::render(SDL_Renderer* renderer) {
 void App::_drawTextField(SDL_Renderer* renderer) const {
 	//draw expression field
 	SDL_Rect rec = { 0 };
-	rec.x = TEXTFIELD_OFFSET_X;
-	rec.y = TEXTFIELD_OFFSET_Y;
-	rec.w = TEXTFIELD_WIDTH;
+	rec.x = _tf_offset_x;
+	rec.y = _tf_offset_y;
+	rec.w = _tf_width;
 	rec.h = (int)TEXTSIZE;
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -243,8 +243,8 @@ void App::_drawTextField(SDL_Renderer* renderer) const {
 	SDL_SetRenderDrawColor(renderer, 155, 155, 155, 255);
 	SDL_RenderDrawRect(renderer, &rec);
 
-	drawString(renderer, _textInput, TEXTFIELD_OFFSET_X, TEXTFIELD_OFFSET_Y, _textInputColor, Window::getWindow()->_width / 26, true);
-	drawString(renderer, _inputHistory, TEXTFIELD_OFFSET_X, 0, {255,255,255,255}, Window::getWindow()->_width / 26, true);
+	drawString(renderer, _textInput, _tf_offset_x, _tf_offset_y, _textInputColor, Window::getWindow()->getWidth() / 26, true);
+	drawString(renderer, _inputHistory, _tf_offset_x, 0, {255,255,255,255}, Window::getWindow()->getWidth() / 26, true);
 }
 
 std::string App::getTextInput() const {

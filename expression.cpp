@@ -62,7 +62,7 @@ unsigned int preced(const char& ch) {
 }
 
 bool isNumber(const char& ch) {
-	return (ch >= '0' && ch <= '9');
+	return ((ch >= '0' && ch <= '9') || ch == 'x');
 }
 
 bool isOperator(const char& ch) {
@@ -80,9 +80,20 @@ std::string convertUnaryToBinary(const std::string& expr) {
 
 	unsigned leftPara = 0;
 	unsigned rightPara = 0;
+	size_t i = 1;
 
-	// replace '-x' with '(0-x)', '1*-(x)' with '1*(0-(x))
-	for (size_t i = 1; i < result.length(); i++) {
+	// replace '-x' with '(0-x)':
+	if (!result.empty() && result.length() > 1 && result.at(0) == '-') {
+		result.insert(0, "(0");
+		for (i = 3; i < result.length(); i++) {
+			if (isOperator(result.at(i))) break;
+		}
+		result.insert(i, ")");
+		i++;
+	}
+
+	// replace repeated operators, ex: '*-x' with '*(-x)'
+	for (; i < result.length(); i++) {
 		if (isOperator(result.at(i - 1)) && result.at(i) == '-') {
 			//insert LHS '(0'
 			result.insert(i, "(0");
@@ -94,16 +105,6 @@ std::string convertUnaryToBinary(const std::string& expr) {
 					i--;
 					break;
 				}
-
-				//either starts with a left para or not
-				if (result.at(i) == '(') {
-					leftPara++;
-					while (leftPara > rightPara) {
-						i++;
-						if (result.at(i) == ')') rightPara++;
-						else if (result.at(i) == '(') leftPara++;
-					}
-				}
 				//i is at the end of RHS
 			}
 			// i is at end of our number
@@ -111,6 +112,7 @@ std::string convertUnaryToBinary(const std::string& expr) {
 			result.insert(i, ")");
 		}
 	}
+
 	return result;
 }
 
@@ -166,7 +168,7 @@ std::string infixToPostfix(const std::string& expr) {
 	return postfix;
 }
 
-float evaluatePostfix(const std::string& expr) {
+float evaluatePostfix(const std::string& expr, const float& val) {
 	std::stack<float> nums;
 	float num = 0.0f;
 	float dec = 0.0f;
@@ -175,8 +177,11 @@ float evaluatePostfix(const std::string& expr) {
 	float left = 0.0f, right = 0.0f;
 
 	for (size_t i = 0; i < expr.length(); i++) {
+		if (expr.at(i) == 'x') {
+			nums.push(val);
+		}
 		//if number: push to stack
-		if (isNumber(expr.at(i)) || expr.at(i) == '.') {
+		else if (isNumber(expr.at(i)) || expr.at(i) == '.') {
 			while ((i < expr.length()) && isNumber(expr.at(i))) {
 				num *= 10.0f;
 				num += (expr.at(i) - '0');
@@ -205,7 +210,6 @@ float evaluatePostfix(const std::string& expr) {
 			left = nums.top();
 			nums.pop();
 
-			
 			switch (expr.at(i)) {
 			case '+':
 				nums.push(left + right);

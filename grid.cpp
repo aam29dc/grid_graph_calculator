@@ -14,12 +14,12 @@ Grid::Grid() {
 }
 
 void Grid::draw(SDL_Renderer* renderer) const {
-	drawBorder(renderer);
+	_drawBorder(renderer);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	drawAxises(renderer);
+	_drawAxises(renderer);
 }
 
-void Grid::drawBorder(SDL_Renderer* renderer) const {
+void Grid::_drawBorder(SDL_Renderer* renderer) const {
 	SDL_FRect rec = { 0 };
 	rec.x = _offsetx;
 	rec.y = _offsety;
@@ -37,7 +37,7 @@ void Grid::displayStats(const Uint32& startTime) const {
 	App::getApp()->drawString("FPS: " + std::to_string(int(1.0f / ((SDL_GetTicks() - startTime) / 1000.0f))), 0.7f, 0.9f);*/
 }
 
-void Grid::drawAxisNumbers() {
+void Grid::_drawAxisNumbers() {
 	/*App::getApp()->drawString(removeTrailingDigits(std::to_string((-_zoom) + _shiftx)), -1.0f, 0.0f); 		//negative x-axis
 	App::getApp()->drawString(removeTrailingDigits(std::to_string((_zoom)+_shiftx)), 0.85f, 0.0f); 			//positive x-axis
 	App::getApp()->drawString(removeTrailingDigits(std::to_string((-_zoom) + _shifty)), 0.01f, -0.925f);	//negative y-axis
@@ -45,36 +45,29 @@ void Grid::drawAxisNumbers() {
 }
 
 void Grid::drawFunction(SDL_Renderer* renderer, const std::string& expr) const {
-	std::string exprX = expr;
 	//if no x value, then its not a function, return
 	if (expr.find('x') != std::string::npos) {
-		SDL_FPoint pt = { -_zoom + _shiftx, 0.0f };			//current point
-		float next_y = 0.0f;
-		exprX = convertUnaryToBinary(substitute(expr, 'x', pt.x));
-		pt.y = evaluatePostfix(infixToPostfix(exprX));
+		SDL_FPoint pt = { -_zoom + _shiftx, 0.0f };
+		pt.y = evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x);
 
 		// grid coordinates to screen coordinates:
 		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
-
 		for (unsigned int i = 0; i < _iters; i++) {
-			exprX = convertUnaryToBinary(substitute(expr, 'x', pt.x + ((2.0f * _zoom) / _iters)));
-			next_y = evaluatePostfix(infixToPostfix(exprX));
 
 			SDL_RenderDrawLineF(renderer,
 				((pt.x - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
 				-((pt.y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety,
 				((pt.x + ((2.0f * _zoom) / _iters) - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
-				-((next_y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety
+				-(((evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x + ((2.0f * _zoom) / _iters))) - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety
 			);
 
 			pt.x += ((2.0f * _zoom) / _iters);
-			exprX = convertUnaryToBinary(substitute(expr, 'x', pt.x));
-			pt.y = evaluatePostfix(infixToPostfix(exprX));
+			pt.y = evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x);
 		}
 	}
 }
 
-void Grid::drawAxises(SDL_Renderer* renderer) const {
+void Grid::_drawAxises(SDL_Renderer* renderer) const {
 	//App::getApp()->drawString("x", 0.95f, -0.05f);
 	//draw x axis
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);

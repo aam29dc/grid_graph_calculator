@@ -14,18 +14,18 @@
 		We correct this before the user hits '=',
 */
 
-void leftParaPressEvent(const Button& button);
-void rightParaPressEvent(const Button& button);
-void xPressEvent(const Button& button);
-void zeroPressEvent(const Button& button);
-void decimalPressEvent(const Button& button);
-void operatorPressEvent(const Button& button);
-void equalPressEvent(const Button& button);
-void numberPressEvent(const Button& button);
-void equalPressEvent(const Button& button);
-void CEPressEvent(const Button& button);
-void clearPressEvent(const Button& button);
-void backPressEvent(const Button& button);
-void negatePressEvent(const Button& button);
+void leftParaPressEvent(const char& ch);
+void rightParaPressEvent(const char& ch);
+void xPressEvent(const char& ch);
+void zeroPressEvent(const char& ch);
+void decimalPressEvent(const char& ch);
+void operatorPressEvent(const char& ch); 	// instead of access to the whole button, we just need the char it stores,
+void equalPressEvent(const char& ch);		// if we dont pass a parameter, then we need a function for every number
+void numberPressEvent(const char& ch);
+void equalPressEvent(const char& ch);
+void CEPressEvent(const char& ch);
+void clearPressEvent(const char& ch);
+void backPressEvent(const char& ch);
+void negatePressEvent(const char& ch);
 
 #endif
