@@ -12,7 +12,7 @@ bool initFont(const std::string& src) {
     return true;
 }
 
-void drawString(SDL_Renderer* renderer, const std::string& str, const int& xpos, const int& ypos, const SDL_Color& color, const unsigned& maxtext, const bool& limit) {
+void drawString(SDL_Renderer* renderer, const std::string& str, const float& xpos, const float& ypos, const SDL_Color& color, const unsigned& maxtext, const bool& limit) {
 	if (str.empty()) return;
 	SDL_Surface* surfaceMsg = TTF_RenderText_Solid(font, str.c_str(), color);
 	if (surfaceMsg == NULL) {
@@ -29,8 +29,8 @@ void drawString(SDL_Renderer* renderer, const std::string& str, const int& xpos,
 	SDL_FRect dst_rect = { 0 };
 	SDL_Rect src_rect = { 0 };
 
-	dst_rect.x = (float)xpos;
-	dst_rect.y = (float)ypos-4;			// the font RobotoMono-VariableFont_wght.ttf is shifted
+	dst_rect.x = xpos;
+	dst_rect.y = ypos-4;			// the font RobotoMono-VariableFont_wght.ttf is shifted
 	dst_rect.w = (float)surfaceMsg->w;
 	dst_rect.h = (float)surfaceMsg->h;
 

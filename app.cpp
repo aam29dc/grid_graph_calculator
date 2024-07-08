@@ -8,9 +8,11 @@ App::App() {
 	_grid = new Grid();
     _startTime = 0;
 	_textInput = "";
-	_inputHistory = "";
+	_inputHistory.push_back("");
 	_textInputColor = { 0, 0, 0, 255 };
 	_bgColor = { 0, 0, 0, 255 };
+	_funcColor_seq = 0;
+	_funcColor = { 255,0,0,255 };
 	_tf_offset_x = (Window::getWindow()->getWidth() / 2);
 	_tf_offset_y = 32;
 	_tf_width = (Window::getWindow()->getWidth() / 2);
@@ -29,8 +31,13 @@ App* App::getApp() {
 	return _app;
 }
 
-void App::setInputHistory(const std::string& text) {
-	_inputHistory = text;
+void App::setInputHistory(const std::string& text, const unsigned int& at) {
+	if (at < _inputHistory.size()) {
+		_inputHistory[at] = text;
+	}
+	else {
+		_inputHistory.push_back(text);
+	}
 }
 
 void App::_setupKeypad() {
@@ -59,12 +66,15 @@ void App::_setupKeypad() {
 	_keymap[22] = '.';
 	_keymap[23] = '=';
 
-	for (int i = 0; i < NUM_BUTTONS; i++) {
+	_keypad_offset_x = (Window::getWindow()->getWidth() / 2.0f);
+	_keypad_offset_y = (Window::getWindow()->getHeight() / 4.0f);
+
+	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
 		_keypad[i].setText(std::string(1, _keymap[i]));
-		_keypad[i].setPosX(((Window::getWindow()->getHeight() / 10) * (i % KEYPAD_COLS)));
-		_keypad[i].setPosY(((Window::getWindow()->getHeight() / 10) * int(i / KEYPAD_COLS)));
-		_keypad[i].setHeight(32);
-		_keypad[i].setWidth(32);
+		_keypad[i].setPosX(32.0f * float(Window::getWindow()->getWidth() / 320.0f) * float(i % KEYPAD_COLS));
+		_keypad[i].setPosY(32.0f * float(Window::getWindow()->getHeight() / 320.0f) * float(i / KEYPAD_COLS));
+		_keypad[i].setWidth(32.0f * float(Window::getWindow()->getWidth() / 320.0f));
+		_keypad[i].setHeight(32.0f * float(Window::getWindow()->getHeight() / 320.0f));
 
 		if (_keymap[i] == '0') _keypad[i].setCallback(zeroPressEvent);
 		else if (_keymap[i] == 'x') _keypad[i].setCallback(xPressEvent);
@@ -85,6 +95,14 @@ Grid* App::getGrid() const {
 	return _grid;
 }
 
+void App::_nextFuncColor(const unsigned int& seq) {
+	char n = (seq % 7) + 1;		// skips (0,0,0)
+
+	_funcColor.r = (n & 1)*255;
+	_funcColor.g = (n & 2)*255;
+	_funcColor.b = (n & 4)*255;
+}
+
 void App::writeScreenshot(SDL_Renderer* renderer) const {
 	SDL_Surface* sshot = SDL_CreateRGBSurfaceWithFormat(0, Window::getWindow()->getWidth(), Window::getWindow()->getHeight(), 24, SDL_PIXELFORMAT_RGB24);
 	SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB24, sshot->pixels, sshot->pitch);
@@ -101,6 +119,7 @@ int App::_findKey(const char& ch) const {
 }
 
 bool App::handleEvents() {
+	SDL_Point mpos = Input::getInputHandler()->getMousePosition();
 	Input::getInputHandler()->updatePrevKeyStates();
 	if (Input::getInputHandler()->update() == true) {	//return bool handles window exit
 		return true;
@@ -133,7 +152,7 @@ bool App::handleEvents() {
 		_grid->setZoom(1.0f);
 	}
 
-	for (int i = 1; i < 10; i++) {
+	for (unsigned int i = 1; i < 10; i++) {
 		if (Input::getInputHandler()->isKeyReleased(SDL_Scancode(SDL_SCANCODE_1 + i - 1))) {
 			_keypad[_findKey(i + '0')].callback();
 		}
@@ -174,24 +193,8 @@ bool App::handleEvents() {
 	if (Input::getInputHandler()->isKeyDown(SDL_SCANCODE_ESCAPE)) {
 		return true;
 	}
-	return false;
-}
-
-void App::update() {
-	SDL_Point mpos = Input::getInputHandler()->getMousePosition();
-
-	getGrid()->setHeight(Window::getWindow()->getHeight());
-	getGrid()->setWidth(Window::getWindow()->getWidth() / 2);
-	_tf_offset_x = (Window::getWindow()->getWidth() / 2);
-	_tf_offset_y = 32;
-	_tf_width = (Window::getWindow()->getWidth() / 2);
-	_keypad_offset_x = (Window::getWindow()->getWidth() / 2) + (Window::getWindow()->getWidth() / 8);
-	_keypad_offset_y = (Window::getWindow()->getHeight() / 4);
 
 	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
-		_keypad[i].setWidth(32);
-		_keypad[i].setHeight(32);
-
 		if ((mpos.x > _keypad[i].getPosX() + _keypad_offset_x && mpos.x < _keypad[i].getPosX() + _keypad[i].getWidth() + _keypad_offset_x)
 			&& (mpos.y > _keypad[i].getPosY() + _keypad_offset_y && mpos.y < _keypad[i].getPosY() + _keypad[i].getHeight() + _keypad_offset_y)) {
 
@@ -205,10 +208,29 @@ void App::update() {
 		else _keypad[i].setHover(false);
 	}
 
-	for (int i = 0; i < NUM_BUTTONS; i++) {
+	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
 		if (_keypad[i].getClick() == true) {
 			_keypad[i].callback();
 		}
+	}
+
+	return false;
+}
+
+void App::update() {
+	getGrid()->setHeight(Window::getWindow()->getHeight());
+	getGrid()->setWidth(Window::getWindow()->getWidth() / 2);
+	_tf_offset_x = (Window::getWindow()->getWidth() / 2);
+	_tf_offset_y = 32;
+	_tf_width = (Window::getWindow()->getWidth() / 2);
+	_keypad_offset_x = (Window::getWindow()->getWidth() / 2.0f) + (Window::getWindow()->getWidth() / 16.0f);
+	_keypad_offset_y = (Window::getWindow()->getHeight() / 4.0f);
+
+	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
+		_keypad[i].setPosX(32.0f * float(Window::getWindow()->getWidth() / 320.0f) * float(i % KEYPAD_COLS));
+		_keypad[i].setPosY(32.0f * float(Window::getWindow()->getHeight() / 320.0f) * float(i / KEYPAD_COLS));
+		_keypad[i].setWidth(32.0f * float(Window::getWindow()->getWidth() / 320.0f));
+		_keypad[i].setHeight(32.0f * float(Window::getWindow()->getHeight() / 320.0f));
 	}
 }
 
@@ -217,8 +239,12 @@ void App::render(SDL_Renderer* renderer) {
 	SDL_RenderClear(renderer);
 
 	_grid->draw(renderer);
-	if (!_textInput.empty() && _textInput.find('x') != std::string::npos && !isOperator(_textInput.back())) {
-		_grid->drawFunction(renderer, _textInput);
+	for (unsigned i = 0; i < _inputHistory.size(); i++) {
+		if (isValidEquation(_inputHistory[i])) {
+			_nextFuncColor(i);
+			SDL_SetRenderDrawColor(renderer, _funcColor.r, _funcColor.g, _funcColor.b, 255);
+			_grid->drawFunction(renderer, _inputHistory[i]);
+		}
 	}
 
 	_drawTextField(renderer);
@@ -232,26 +258,26 @@ void App::render(SDL_Renderer* renderer) {
 
 void App::_drawTextField(SDL_Renderer* renderer) const {
 	//draw expression field
-	SDL_Rect rec = { 0 };
-	rec.x = _tf_offset_x;
-	rec.y = _tf_offset_y;
-	rec.w = _tf_width;
-	rec.h = (int)TEXTSIZE;
+	SDL_FRect rec = { 0 };
+	rec.x = (float)_tf_offset_x;
+	rec.y = (float)_tf_offset_y;
+	rec.w = (float)_tf_width;
+	rec.h = (float)TEXTSIZE;
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(renderer, &rec);
+	SDL_RenderFillRectF(renderer, &rec);
 	SDL_SetRenderDrawColor(renderer, 155, 155, 155, 255);
-	SDL_RenderDrawRect(renderer, &rec);
+	SDL_RenderDrawRectF(renderer, &rec);
 
 	drawString(renderer, _textInput, _tf_offset_x, _tf_offset_y, _textInputColor, Window::getWindow()->getWidth() / 26, true);
-	drawString(renderer, _inputHistory, _tf_offset_x, 0, {255,255,255,255}, Window::getWindow()->getWidth() / 26, true);
+	drawString(renderer, _inputHistory[0], _tf_offset_x, 0, {255,255,255,255}, Window::getWindow()->getWidth() / 26, true);
 }
 
 std::string App::getTextInput() const {
 	return _textInput;
 }
 
-std::string App::getInputHistory() const {
+std::vector<std::string> App::getInputHistory() const {
 	return _inputHistory;
 }
 

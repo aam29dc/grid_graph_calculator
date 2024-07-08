@@ -8,6 +8,7 @@
 #include "config_parser.hpp"
 #include "math_notation.hpp"
 #include "font.hpp"
+#include <vector>
 
 #include <SDL.h>
 
@@ -24,22 +25,25 @@ private:
 
 	Uint32 _startTime;
 
-	std::string _inputHistory;
+	std::vector<std::string> _inputHistory;
 	std::string _textInput;
 	SDL_Color _textInputColor;
 
 	unsigned int _tf_offset_x;
 	unsigned int _tf_offset_y;
 	unsigned int _tf_width;
-	int _keypad_offset_x;
-	int _keypad_offset_y;
+	float _keypad_offset_x;
+	float _keypad_offset_y;
 
 	SDL_Color _bgColor;
+	unsigned int _funcColor_seq;
+	SDL_Color _funcColor;
 
 	std::map<int, char> _keymap;
 	int _findKey(const char& ch) const;
 	void _setupKeypad();
 	void _drawTextField(SDL_Renderer* renderer) const;
+	void _nextFuncColor(const unsigned int& seq);
 public:
 	App();
 	~App();
@@ -55,10 +59,10 @@ public:
 	void writeScreenshot(SDL_Renderer* renderer) const;
 
 	std::string getTextInput() const;
-	std::string getInputHistory() const;
+	std::vector<std::string> getInputHistory() const;
 
 	void setTextInput(const std::string& text);
-	void setInputHistory(const std::string& text);
+	void setInputHistory(const std::string& text, const unsigned int& at);
 };
 
 #endif

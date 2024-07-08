@@ -45,21 +45,21 @@ void Grid::_drawAxisNumbers() {
 }
 
 void Grid::drawFunction(SDL_Renderer* renderer, const std::string& expr) const {
-	//if no x value, then its not a function, return
-	if (expr.find('x') != std::string::npos) {
+	if (expr.find('x') != std::string::npos) {	
 		SDL_FPoint pt = { -_zoom + _shiftx, 0.0f };
 		pt.y = evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x);
 
 		// grid coordinates to screen coordinates:
 		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
 		for (unsigned int i = 0; i < _iters; i++) {
-
-			SDL_RenderDrawLineF(renderer,
-				((pt.x - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
-				-((pt.y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety,
-				((pt.x + ((2.0f * _zoom) / _iters) - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
-				-(((evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x + ((2.0f * _zoom) / _iters))) - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety
-			);
+			if (isfinite(pt.y)) {
+				SDL_RenderDrawLineF(renderer,
+					((pt.x - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
+					-((pt.y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety,
+					((pt.x + ((2.0f * _zoom) / _iters) - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
+					-(((evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x + ((2.0f * _zoom) / _iters))) - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety
+				);
+			}
 
 			pt.x += ((2.0f * _zoom) / _iters);
 			pt.y = evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x);
@@ -71,21 +71,24 @@ void Grid::_drawAxises(SDL_Renderer* renderer) const {
 	//App::getApp()->drawString("x", 0.95f, -0.05f);
 	//draw x axis
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderDrawLineF(renderer,
-		_offsetx,
-		(_height / 2.0f) + (_shifty * ((_height / 2.0f) / _zoom)) + _offsety,
-		float(_width) + _offsetx,
-		(_height / 2.0f) + (_shifty * ((_height / 2.0f) / _zoom)) + _offsety
-	);
+	if (_shifty < 1.0f && _shifty > -1.0f) {
+		SDL_RenderDrawLineF(renderer,
+			_offsetx,
+			(_height / 2.0f) + (_shifty * ((_height / 2.0f) / _zoom)) + _offsety,
+			float(_width) + _offsetx,
+			(_height / 2.0f) + (_shifty * ((_height / 2.0f) / _zoom)) + _offsety
+		);
+	}
 	//App::getApp()->drawString("y", -0.05f, 0.95f);
 	//draw y axis
-	SDL_RenderDrawLineF(renderer,
-		(_width / 2.0f) - (_shiftx * ((_width / 2.0f) / _zoom)) + _offsetx,
-		_offsety,
-		(_width / 2.0f) - (_shiftx * ((_width / 2.0f) / _zoom)) + _offsetx,
-		float(_height) + _offsety
-	);
-
+	if (_shiftx < 1.0f && _shiftx > -1.0f) {
+		SDL_RenderDrawLineF(renderer,
+			(_width / 2.0f) - (_shiftx * ((_width / 2.0f) / _zoom)) + _offsetx,
+			_offsety,
+			(_width / 2.0f) - (_shiftx * ((_width / 2.0f) / _zoom)) + _offsetx,
+			float(_height) + _offsety
+		);
+	}
 }
 
 unsigned int Grid::getWidth() const {

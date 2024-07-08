@@ -1,10 +1,7 @@
 #include "app.hpp"
 #undef main
 
-#include <float.h>
-#include <sstream>
 #include <iostream>
-#include <iomanip>
 
 auto main() -> int {
 	//read config first

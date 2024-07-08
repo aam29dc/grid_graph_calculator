@@ -1,5 +1,21 @@
 #include "expression.hpp"
 
+bool isValidEquation(const std::string& expr) {
+	unsigned leftParas = 0;
+	unsigned rightParas = 0;
+	size_t i = 0;
+
+	if (!expr.empty() && expr.find('x') != std::string::npos) {
+		for (; i < expr.length(); i++) {
+			if (expr.at(i) == '(') leftParas++;
+			else if (expr.at(i) == ')') rightParas++;
+		}
+		if (leftParas != rightParas || isOperator(expr.back())) return false;
+		return true;
+	}
+	return false;
+}
+
 int parity(const float& num) {
 	if (num < 0) return -1;
 	else if (num > 0) return 1;

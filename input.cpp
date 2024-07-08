@@ -26,13 +26,13 @@ bool Input::update() {
 	while (SDL_PollEvent(&event)) {
 		switch (event.type)	{
 		case SDL_MOUSEBUTTONDOWN:
-			onMouseButtonDown(event);
+			_onMouseButtonDown(event);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			onMouseButtonUp(event);
+			_onMouseButtonUp(event);
 			break;
 		case SDL_MOUSEMOTION:
-			onMouseMotion(event);
+			_onMouseMotion(event);
 			break;
 		case SDL_KEYUP:
 		case SDL_KEYDOWN:
@@ -54,7 +54,7 @@ bool Input::update() {
 	return false;
 }
 
-void Input::onMouseButtonDown(const SDL_Event& event) {
+void Input::_onMouseButtonDown(const SDL_Event& event) {
 	if (event.button.button == SDL_BUTTON_LEFT)	{
 		_mouseButtonStates[LEFT] = true;
 	}
@@ -66,7 +66,7 @@ void Input::onMouseButtonDown(const SDL_Event& event) {
 	}
 }
 
-void Input::onMouseButtonUp(const SDL_Event& event)
+void Input::_onMouseButtonUp(const SDL_Event& event)
 {
 	if (event.button.button == SDL_BUTTON_LEFT)	{
 		_mouseButtonStates[LEFT] = false;
@@ -79,7 +79,7 @@ void Input::onMouseButtonUp(const SDL_Event& event)
 	}
 }
 
-void Input::onMouseMotion(const SDL_Event& event) {
+void Input::_onMouseMotion(const SDL_Event& event) {
 	_mPos.x = event.motion.x;
 	_mPos.y = event.motion.y;
 }

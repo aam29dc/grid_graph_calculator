@@ -1,7 +1,14 @@
 #include "math_notation.hpp"
 
+std::string cleanExpr(const std::string& expr) {
+	if (expr.find("inf") != std::string::npos || expr.find("nan") != std::string::npos) {
+		return "";
+	}
+	return expr;
+}
+
 void leftParaPressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
 
 	if (!expr.empty() && expr.back() == '.') return;
 	else if (!expr.empty() && (isNumber(expr.back()) || expr.back() == 'x' || expr.back() == ')')) {
@@ -11,7 +18,7 @@ void leftParaPressEvent(const char& ch) {
 }
 
 void rightParaPressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
 	int leftParas = 0;
 	int rightParas = 1;
 
@@ -36,7 +43,7 @@ void rightParaPressEvent(const char& ch) {
 }
 
 void xPressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
 
 	if (!expr.empty() && expr.back() == '.') return;	// if to the left of the . there is a number, we could insert a * on the right . (123.*x)
 	else if (!expr.empty() && (isNumber(expr.back()) || expr.back() == ')' || expr.back() == 'x')) {
@@ -49,7 +56,7 @@ void xPressEvent(const char& ch) {
 //-00000
 //5-0000000
 void zeroPressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
 	unsigned num = 0;
 	bool hasNum = true;
 	size_t i = expr.length();
@@ -85,7 +92,7 @@ void zeroPressEvent(const char& ch) {
 }
 
 void numberPressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
 	size_t i = expr.length();
 	unsigned num = 0;
 
@@ -111,7 +118,7 @@ void numberPressEvent(const char& ch) {
 
 // doesn't allow "(5).5" which _could_ be converted to "(5)*.5"
 void decimalPressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
 
 	if (!expr.empty() && ((expr.back() == '.' || expr.back() == ')') || expr.back() == 'x')) {
 		return;
@@ -131,7 +138,7 @@ void decimalPressEvent(const char& ch) {
 }
 
 void operatorPressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
 
 	if (expr.empty()													// "+" without a number on the left is illegal. (but "-" is legal notation so far)
 		|| (expr.back() == '.' && expr.length() == 1)					// ".+" decimal then operator without a number on the left is illegal
@@ -146,11 +153,11 @@ void operatorPressEvent(const char& ch) {
 }
 
 void equalPressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
-	App::getApp()->setInputHistory(expr + '=');
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
+	App::getApp()->setInputHistory(expr, App::getApp()->getInputHistory().size());
 
 	if (expr.find('x') != std::string::npos) {	// if equation has a x variable, graph it
-		App::getApp()->getGrid()->drawFunction(Window::getWindow()->_renderer, expr);
+		//App::getApp()->getGrid()->drawFunction(Window::getWindow()->_renderer, expr);
 	}
 	else {										// if no x then just evaluate expression
 		expr = removeTrailingDigits(std::to_string(evaluatePostfix(infixToPostfix(expr))));
@@ -164,11 +171,13 @@ void CEPressEvent(const char& ch) {
 
 void clearPressEvent(const char& ch) {
 	App::getApp()->setTextInput("");
-	App::getApp()->setInputHistory("");
+	for (unsigned int i = 0; i < App::getApp()->getInputHistory().size(); i++) {
+		App::getApp()->setInputHistory("", i);
+	}
 }
 
 void backPressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
 
 	if (!expr.empty() && (expr == "inf" || expr == "-inf" || expr == "-nan(ind)" || expr == "nan(ind)")) {
 		App::getApp()->setTextInput("");
@@ -180,7 +189,7 @@ void backPressEvent(const char& ch) {
 }
 
 void negatePressEvent(const char& ch) {
-	std::string expr = App::getApp()->getTextInput();
+	std::string expr = cleanExpr(App::getApp()->getTextInput());
 	unsigned num = 0;
 
 	if (!expr.empty()) {

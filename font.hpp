@@ -17,5 +17,5 @@ bool initFont(const std::string& src = "assets/RobotoMono-VariableFont_wght.ttf"
 * \param ypos [-1,1]
 * \returns void
 */
-void drawString(SDL_Renderer* renderer, const std::string& str, const int& xpos, const int& ypos, const SDL_Color& color, const unsigned& maxtext = 0, const bool& limit = false);
+void drawString(SDL_Renderer* renderer, const std::string& str, const float& xpos, const float& ypos, const SDL_Color& color, const unsigned& maxtext = 0, const bool& limit = false);
 #endif

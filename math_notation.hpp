@@ -14,6 +14,8 @@
 		We correct this before the user hits '=',
 */
 
+std::string cleanExpr(const std::string& expr);
+
 void leftParaPressEvent(const char& ch);
 void rightParaPressEvent(const char& ch);
 void xPressEvent(const char& ch);

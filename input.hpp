@@ -24,9 +24,9 @@ private:
 	Uint8 _prevKeyStates[SDL_NUM_SCANCODES];
 	int _numkeys;
 
-	void onMouseButtonDown(const SDL_Event& event);	// private all these
-	void onMouseButtonUp(const SDL_Event& event);
-	void onMouseMotion(const SDL_Event& event);
+	void _onMouseButtonDown(const SDL_Event& event);	// private all these
+	void _onMouseButtonUp(const SDL_Event& event);
+	void _onMouseMotion(const SDL_Event& event);
 public:
 	Input();
 	static Input* getInputHandler();

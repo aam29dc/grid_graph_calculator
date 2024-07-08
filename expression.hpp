@@ -6,6 +6,8 @@
 #include <stack>
 #include <math.h>
 
+bool isValidEquation(const std::string& expr);
+
 int parity(const float& num);
 
 unsigned int preced(const char& ch);

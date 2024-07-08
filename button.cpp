@@ -1,6 +1,6 @@
 #include "button.hpp"
 
-Button::Button(const std::string& text, const int& w, const int& h, const int& x, const int& y) {
+Button::Button(const std::string& text, const float& w, const float& h, const float& x, const float& y) {
 	_width = w;
 	_height = h;
 	_posx = x;
@@ -26,13 +26,13 @@ std::string Button::getText() const {
 	return _text;
 }
 
-void Button::draw(SDL_Renderer* renderer, const int& xoffset, const int& yoffset) const {
+void Button::draw(SDL_Renderer* renderer, const float& xoffset, const float& yoffset) const {
 	SDL_FRect rect = { 0 };
 
-	rect.x = (float)(_posx + xoffset);
-	rect.y = (float)(_posy + yoffset);
-	rect.w = (float)(32);
-	rect.h = (float)(32);
+	rect.x = _posx + xoffset;
+	rect.y = _posy + yoffset;
+	rect.w = _width;
+	rect.h = _height;
 
 	SDL_Color color = {0};
 
@@ -65,11 +65,11 @@ void Button::setText(const std::string& text) {
 	_text = text;
 }
 
-void Button::setPosX(const int& x) {
+void Button::setPosX(const float& x) {
 	_posx = x;
 }
 
-void Button::setPosY(const int& y) {
+void Button::setPosY(const float& y) {
 	_posy = y;
 }
 
@@ -89,19 +89,19 @@ SDL_Color Button::getHoverColor() const {
 	return _hoverColor;
 }
 
-int Button::getWidth() const {
+float Button::getWidth() const {
 	return _width;
 }
 
-int Button::getHeight() const {
+float Button::getHeight() const {
 	return _height;
 }
 
-int Button::getPosX() const {
+float Button::getPosX() const {
 	return _posx;
 }
 
-int Button::getPosY() const {
+float Button::getPosY() const {
 	return _posy;
 }
 
@@ -113,10 +113,10 @@ void Button::setClick(const bool& val) {
 	_click = val;
 }
 
-void Button::setHeight(const int& height) {
+void Button::setHeight(const float& height) {
 	_height = height;
 }
 
-void Button::setWidth(const int& width) {
+void Button::setWidth(const float& width) {
 	_width = width;
 }
