@@ -1,9 +1,12 @@
 #ifndef WINDOW_H
 #define WINDOW
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+#ifndef DEBUG
+	#include <SDL.h>
+	#include <SDL_image.h>
+	#include <SDL_ttf.h>
+#endif // DEBUG
+
 #include "font.hpp"
 
 inline extern const unsigned int SCREEN_WIDTH = 640;
@@ -24,13 +27,13 @@ public:
 	SDL_Window* _window;
 	SDL_Renderer* _renderer;
 
-	unsigned int getWidth() const;
-	unsigned int getHeight() const;
-	bool getMouseFocus() const;
-	bool getKeyboardFocus() const;
-	bool getFullscreen() const;
-	bool getMinimized() const;
-	bool getQuit() const;
+	const unsigned int& getWidth() const;
+	const unsigned int& getHeight() const;
+	const bool& getMouseFocus() const;
+	const bool& getKeyboardFocus() const;
+	const bool& getFullscreen() const;
+	const bool& getMinimized() const;
+	const bool& getQuit() const;
 
 	Window(const unsigned width = SCREEN_WIDTH, const unsigned height = SCREEN_HEIGHT);
 	~Window();

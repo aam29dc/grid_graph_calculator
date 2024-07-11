@@ -10,7 +10,9 @@
 #include "font.hpp"
 #include <vector>
 
-#include <SDL.h>
+#ifndef DEBUG
+	#include <SDL.h>
+#endif
 
 inline extern const unsigned int NUM_BUTTONS = 24;
 inline extern const unsigned int KEYPAD_COLS = 4;
@@ -36,7 +38,6 @@ private:
 	float _keypad_offset_y;
 
 	SDL_Color _bgColor;
-	unsigned int _funcColor_seq;
 	SDL_Color _funcColor;
 
 	std::map<int, char> _keymap;
@@ -58,9 +59,8 @@ public:
 
 	void writeScreenshot(SDL_Renderer* renderer) const;
 
-	std::string getTextInput() const;
-	std::vector<std::string> getInputHistory() const;
-
+	const std::string& getTextInput() const;
+	const std::vector<std::string>& getInputHistory() const;
 	void setTextInput(const std::string& text);
 	void setInputHistory(const std::string& text, const unsigned int& at);
 };

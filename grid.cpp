@@ -45,24 +45,26 @@ void Grid::_drawAxisNumbers() {
 }
 
 void Grid::drawFunction(SDL_Renderer* renderer, const std::string& expr) const {
+	std::string exprX = infixToPostfix(convertUnaryToBinary(expr));
 	if (expr.find('x') != std::string::npos) {	
-		SDL_FPoint pt = { -_zoom + _shiftx, 0.0f };
-		pt.y = evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x);
+		SDL_FPoint pt = { -_zoom + _shiftx, evaluatePostfix(exprX, pt.x) };
+		float next_y = evaluatePostfix(exprX, pt.x + ((2.0f * _zoom) / _iters));
 
 		// grid coordinates to screen coordinates:
 		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
 		for (unsigned int i = 0; i < _iters; i++) {
-			if (isfinite(pt.y)) {
+			if (isfinite(pt.y) && isfinite(next_y)) {
 				SDL_RenderDrawLineF(renderer,
 					((pt.x - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
 					-((pt.y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety,
 					((pt.x + ((2.0f * _zoom) / _iters) - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
-					-(((evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x + ((2.0f * _zoom) / _iters))) - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety
+					-((next_y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety
 				);
 			}
 
 			pt.x += ((2.0f * _zoom) / _iters);
-			pt.y = evaluatePostfix(infixToPostfix(convertUnaryToBinary(expr)), pt.x);
+			pt.y = evaluatePostfix(exprX, pt.x);
+			next_y = evaluatePostfix(exprX, pt.x + ((2.0f * _zoom) / _iters));
 		}
 	}
 }
@@ -91,15 +93,15 @@ void Grid::_drawAxises(SDL_Renderer* renderer) const {
 	}
 }
 
-unsigned int Grid::getWidth() const {
+const unsigned int& Grid::getWidth() const {
 	return _width;
 }
 
-unsigned int Grid::getHeight() const {
+const unsigned int& Grid::getHeight() const {
 	return _height;
 }
 
-unsigned int Grid::getIters() const {
+const unsigned int& Grid::getIters() const {
 	return _iters;
 }
 
@@ -108,15 +110,15 @@ void Grid::setIters(const unsigned int& val) {
 	else _iters = val;
 }
 
-float Grid::getShiftx() const {
+const float& Grid::getShiftx() const {
 	return _shiftx;
 }
 
-float Grid::getShifty() const {
+const float& Grid::getShifty() const {
 	return _shifty;
 }
 
-float Grid::getZoom() const {
+const float& Grid::getZoom() const {
 	return _zoom;
 }
 

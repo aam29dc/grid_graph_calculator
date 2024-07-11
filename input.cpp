@@ -103,11 +103,11 @@ bool Input::isMouseKeyReleased(const int& buttonNumber) const {
 	return false;
 }
 
-bool Input::getMouseButtonState(const int& buttonNumber) const {
+const bool& Input::getMouseButtonState(const int& buttonNumber) const {
 	return _mouseButtonStates[buttonNumber];
 }
 
-SDL_Point Input::getMousePosition() const {
+const SDL_Point& Input::getMousePosition() const {
 	return _mPos;
 }
 

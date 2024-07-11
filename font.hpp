@@ -1,7 +1,11 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include <SDL_ttf.h>
+#ifndef DEBUG
+	#include <SDL_ttf.h>
+#endif // DEBUG
+
+
 #include <string>
 #include <iostream>
 

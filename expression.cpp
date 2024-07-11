@@ -28,6 +28,8 @@ std::string removeTrailingDigits(std::string fnum, const char& ch) {
 	size_t pos = 0;
 	bool first = true;
 
+	if (fnum.empty()) return "";
+
 	for (size_t i = 0; i < fnum.length(); i++) {
 		if (fnum.at(i) == ch) {
 			if (first == true) {
@@ -63,7 +65,7 @@ std::string substitute(std::string expr, const char& var, const float& val) {
 	return expr;
 }
 
-unsigned int preced(const char& ch) {
+int preced(const char& ch) {
 	switch (ch) {
 	case '^':
 		return 3;
@@ -71,10 +73,12 @@ unsigned int preced(const char& ch) {
 		return 2;
 	case '-':case '+':
 		return 1;
+	case 's':case 'c':case ']': //sine, cosine, unary function calls
+		return 0;
 	default:
 		break;
 	}
-	return 0;
+	return -1;
 }
 
 bool isNumber(const char& ch) {
@@ -83,6 +87,7 @@ bool isNumber(const char& ch) {
 
 bool isOperator(const char& ch) {
 	switch (ch) {
+	case 's':case 'c':case ']':
 	case '-':case '+':case '*':case '/':case '^':case '%':
 		return true;
 	default:
@@ -138,7 +143,7 @@ std::string infixToPostfix(const std::string& expr) {
 
 	for (size_t i = 0; i < expr.length(); i++) {
 		//if scan number then add to expr
-		if (isNumber(expr.at(i))) {
+		if (isNumber(expr.at(i)) || expr.at(i) == '.') {
 			while ((i < expr.length()) && (isNumber(expr.at(i)) || expr.at(i) == '.')) {
 				postfix += expr.at(i);
 				i++;
@@ -192,6 +197,10 @@ float evaluatePostfix(const std::string& expr, const float& val) {
 
 	float left = 0.0f, right = 0.0f;
 
+	if (expr.empty()) {
+		return 0.0f;
+	}
+
 	for (size_t i = 0; i < expr.length(); i++) {
 		if (expr.at(i) == 'x') {
 			nums.push(val);
@@ -219,7 +228,11 @@ float evaluatePostfix(const std::string& expr, const float& val) {
 			nums.push(num);
 			num = 0;
 		}
-		//if operator: pop two off stack, evaluate, then push back on stack
+		//if unary / function call operator, 
+		else if (expr.at(i) == 's' || expr.at(i) == 'c') {
+
+		}
+		//if binary operator: pop two off stack, evaluate, then push back on stack
 		else if (isOperator(expr.at(i))) {
 			right = nums.top();
 			nums.pop();

@@ -10,7 +10,7 @@ bool isValidEquation(const std::string& expr);
 
 int parity(const float& num);
 
-unsigned int preced(const char& ch);
+int preced(const char& ch);
 
 bool isOperator(const char& ch);
 

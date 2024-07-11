@@ -2,10 +2,13 @@
 #define GRID_H
 
 #include "expression.hpp"
-#include <SDL.h>
 #include <iostream>
 #include <string>
 #include <format>
+
+#ifndef DEBUG
+	#include <SDL.h>
+#endif // DEBUG
 
 class Grid {
 private:
@@ -35,12 +38,12 @@ public:
 	*/
 	void drawFunction(SDL_Renderer* renderer, const std::string& expr) const;
 
-	float getShiftx() const;
-	float getShifty() const;
-	float getZoom() const;
-	unsigned int getWidth() const;
-	unsigned int getHeight() const;
-	unsigned int getIters() const;
+	const float& getShiftx() const;
+	const float& getShifty() const;
+	const float& getZoom() const;
+	const unsigned int& getWidth() const;
+	const unsigned int& getHeight() const;
+	const unsigned int& getIters() const;
 	/* For linear functions use iters = 1, for smooth curves like a sine wave, use a high iters like 200.
 	* \param val number of iterations in drawFunction
 	* \returns void

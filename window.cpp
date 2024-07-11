@@ -53,6 +53,14 @@ void Window::handleWindowEvent(SDL_Event& e) {
 		case SDL_WINDOWEVENT_SIZE_CHANGED:
 			_width = e.window.data1;
 			_height = e.window.data2;
+			if (_width <= SCREEN_WIDTH) {
+				_width = SCREEN_WIDTH;
+			}
+
+			if (_height <= SCREEN_HEIGHT) {
+				_height = SCREEN_HEIGHT;
+			}
+
 			SDL_SetWindowSize(_window, _width, _height);
 			SDL_RenderPresent(_renderer);
 			break;
@@ -102,30 +110,30 @@ void Window::handleWindowEvent(SDL_Event& e) {
 	}
 }
 
-unsigned int Window::getWidth() const {
+const unsigned int& Window::getWidth() const {
 	return _width;
 }
 
-unsigned int Window::getHeight() const {
+const unsigned int& Window::getHeight() const {
 	return _height;
 }
 
-bool Window::getMouseFocus() const {
+const bool& Window::getMouseFocus() const {
 	return _mouseFocus;
 }
 
-bool Window::getKeyboardFocus() const {
+const bool& Window::getKeyboardFocus() const {
 	return _keyboardFocus;
 }
 
-bool Window::getFullscreen() const {
+const bool& Window::getFullscreen() const {
 	return _fullScreen;
 }
 
-bool Window::getMinimized() const {
+const bool& Window::getMinimized() const {
 	return _minimized;
 }
 
-bool Window::getQuit() const {
+const bool& Window::getQuit() const {
 	return _quit;
 }

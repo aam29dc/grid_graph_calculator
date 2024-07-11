@@ -154,6 +154,7 @@ void operatorPressEvent(const char& ch) {
 
 void equalPressEvent(const char& ch) {
 	std::string expr = cleanExpr(App::getApp()->getTextInput());
+
 	App::getApp()->setInputHistory(expr, App::getApp()->getInputHistory().size());
 
 	if (expr.find('x') != std::string::npos) {	// if equation has a x variable, graph it

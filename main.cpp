@@ -10,7 +10,7 @@ auto main() -> int {
 
 	Window::getWindow();
 
-	readConfigFile("assets/config.cfg");
+	//readConfigFile("assets/config.cfg");
 
 	//App::getApp()->init(std::any_cast<int>(variables["width"]), std::any_cast<int>(variables["height"]));
 	App::getApp();

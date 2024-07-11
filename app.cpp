@@ -11,7 +11,6 @@ App::App() {
 	_inputHistory.push_back("");
 	_textInputColor = { 0, 0, 0, 255 };
 	_bgColor = { 0, 0, 0, 255 };
-	_funcColor_seq = 0;
 	_funcColor = { 255,0,0,255 };
 	_tf_offset_x = (Window::getWindow()->getWidth() / 2);
 	_tf_offset_y = 32;
@@ -70,24 +69,24 @@ void App::_setupKeypad() {
 	_keypad_offset_y = (Window::getWindow()->getHeight() / 4.0f);
 
 	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
-		_keypad[i].setText(std::string(1, _keymap[i]));
-		_keypad[i].setPosX(32.0f * float(Window::getWindow()->getWidth() / 320.0f) * float(i % KEYPAD_COLS));
-		_keypad[i].setPosY(32.0f * float(Window::getWindow()->getHeight() / 320.0f) * float(i / KEYPAD_COLS));
-		_keypad[i].setWidth(32.0f * float(Window::getWindow()->getWidth() / 320.0f));
-		_keypad[i].setHeight(32.0f * float(Window::getWindow()->getHeight() / 320.0f));
+		_keypad[i]._text = (std::string(1, _keymap[i]));
+		_keypad[i]._posx = (32.0f * float(Window::getWindow()->getWidth() / 320.0f) * float(i % KEYPAD_COLS));
+		_keypad[i]._posy = (32.0f * float(Window::getWindow()->getHeight() / 320.0f) * float(i / KEYPAD_COLS));
+		_keypad[i]._width = (32.0f * float(Window::getWindow()->getWidth() / 320.0f));
+		_keypad[i]._height = (32.0f * float(Window::getWindow()->getHeight() / 320.0f));
 
-		if (_keymap[i] == '0') _keypad[i].setCallback(zeroPressEvent);
-		else if (_keymap[i] == 'x') _keypad[i].setCallback(xPressEvent);
-		else if (isNumber(_keymap[i]) && _keymap[i] != 'x') _keypad[i].setCallback(numberPressEvent);
-		else if (isOperator(_keymap[i])) _keypad[i].setCallback(operatorPressEvent);
-		else if (_keymap[i] == '(') _keypad[i].setCallback(leftParaPressEvent);
-		else if (_keymap[i] == ')') _keypad[i].setCallback(rightParaPressEvent);
-		else if (_keymap[i] == 'c') _keypad[i].setCallback(CEPressEvent);
-		else if (_keymap[i] == 'C') _keypad[i].setCallback(clearPressEvent);
-		else if (_keymap[i] == 'B') _keypad[i].setCallback(backPressEvent);
-		else if (_keymap[i] == '~') _keypad[i].setCallback(negatePressEvent);
-		else if (_keymap[i] == '.') _keypad[i].setCallback(decimalPressEvent);
-		else if (_keymap[i] == '=') _keypad[i].setCallback(equalPressEvent);
+		if (_keymap[i] == '0') _keypad[i]._callback = zeroPressEvent;
+		else if (_keymap[i] == 'x') _keypad[i]._callback = xPressEvent;
+		else if (isNumber(_keymap[i]) && _keymap[i] != 'x') _keypad[i]._callback = numberPressEvent;
+		else if (isOperator(_keymap[i])) _keypad[i]._callback = operatorPressEvent;
+		else if (_keymap[i] == '(') _keypad[i]._callback = leftParaPressEvent;
+		else if (_keymap[i] == ')') _keypad[i]._callback = rightParaPressEvent;
+		else if (_keymap[i] == 'c') _keypad[i]._callback = CEPressEvent;
+		else if (_keymap[i] == 'C') _keypad[i]._callback = clearPressEvent;
+		else if (_keymap[i] == 'B') _keypad[i]._callback = backPressEvent;
+		else if (_keymap[i] == '~') _keypad[i]._callback = negatePressEvent;
+		else if (_keymap[i] == '.') _keypad[i]._callback = decimalPressEvent;
+		else if (_keymap[i] == '=') _keypad[i]._callback = equalPressEvent;
 	}
 }
 
@@ -154,63 +153,60 @@ bool App::handleEvents() {
 
 	for (unsigned int i = 1; i < 10; i++) {
 		if (Input::getInputHandler()->isKeyReleased(SDL_Scancode(SDL_SCANCODE_1 + i - 1))) {
-			_keypad[_findKey(i + '0')].callback();
+			_keypad[_findKey(i + '0')]._callback(i + '0');
 		}
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_0)) {
-		_keypad[_findKey('0')].callback();
+		_keypad[_findKey('0')]._callback('0');
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_MINUS)) {
-		_keypad[_findKey('-')].callback();
+		_keypad[_findKey('-')]._callback('-');
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_KP_PLUS)) {
-		_keypad[_findKey('+')].callback();
+		_keypad[_findKey('+')]._callback('+');
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_EQUALS)) {
-		_keypad[_findKey('=')].callback();
+		_keypad[_findKey('=')]._callback('=');
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_LEFTBRACKET)) {
-		_keypad[_findKey('(')].callback();
+		_keypad[_findKey('(')]._callback('(');
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_RIGHTBRACKET)) {
-		_keypad[_findKey(')')].callback();
+		_keypad[_findKey(')')]._callback(')');
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_X)) {
-		_keypad[_findKey('x')].callback();
+		_keypad[_findKey('x')]._callback('x');
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_PERIOD)) {
-		_keypad[_findKey('.')].callback();
+		_keypad[_findKey('.')]._callback('.');
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_KP_DIVIDE)) {
-		_keypad[_findKey('/')].callback();
+		_keypad[_findKey('/')]._callback('/');
 	}
 	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_GRAVE)) {
-		_keypad[_findKey('~')].callback();
-	}
-	if (Input::getInputHandler()->isKeyReleased(SDL_SCANCODE_0)) {
-		_keypad[_findKey('0')].callback();
+		_keypad[_findKey('~')]._callback('~');
 	}
 	if (Input::getInputHandler()->isKeyDown(SDL_SCANCODE_ESCAPE)) {
 		return true;
 	}
 
 	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
-		if ((mpos.x > _keypad[i].getPosX() + _keypad_offset_x && mpos.x < _keypad[i].getPosX() + _keypad[i].getWidth() + _keypad_offset_x)
-			&& (mpos.y > _keypad[i].getPosY() + _keypad_offset_y && mpos.y < _keypad[i].getPosY() + _keypad[i].getHeight() + _keypad_offset_y)) {
+		if ((mpos.x > _keypad[i]._posx + _keypad_offset_x && mpos.x < _keypad[i]._posx + _keypad[i]._width + _keypad_offset_x)
+			&& (mpos.y > _keypad[i]._posy + _keypad_offset_y && mpos.y < _keypad[i]._posy + _keypad[i]._height + _keypad_offset_y)) {
 
-			_keypad[i].setHover(true);
+			_keypad[i]._hover = (true);
 
 			if (Input::getInputHandler()->isMouseKeyReleased(mouse_buttons::LEFT)) {
-				_keypad[i].setClick(true);
+				_keypad[i]._click = (true);
 			}
-			else _keypad[i].setClick(false);
+			else _keypad[i]._click = (false);
 		}
-		else _keypad[i].setHover(false);
+		else _keypad[i]._hover = (false);
 	}
 
 	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
-		if (_keypad[i].getClick() == true) {
-			_keypad[i].callback();
+		if (_keypad[i]._click == true) {
+			_keypad[i]._callback(_keymap[i]);
 		}
 	}
 
@@ -227,10 +223,10 @@ void App::update() {
 	_keypad_offset_y = (Window::getWindow()->getHeight() / 4.0f);
 
 	for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
-		_keypad[i].setPosX(32.0f * float(Window::getWindow()->getWidth() / 320.0f) * float(i % KEYPAD_COLS));
-		_keypad[i].setPosY(32.0f * float(Window::getWindow()->getHeight() / 320.0f) * float(i / KEYPAD_COLS));
-		_keypad[i].setWidth(32.0f * float(Window::getWindow()->getWidth() / 320.0f));
-		_keypad[i].setHeight(32.0f * float(Window::getWindow()->getHeight() / 320.0f));
+		_keypad[i]._posx = (32.0f * float(Window::getWindow()->getWidth() / 320.0f) * float(i % KEYPAD_COLS));
+		_keypad[i]._posy = (32.0f * float(Window::getWindow()->getHeight() / 320.0f) * float(i / KEYPAD_COLS));
+		_keypad[i]._width = (32.0f * float(Window::getWindow()->getWidth() / 320.0f));
+		_keypad[i]._height = (32.0f * float(Window::getWindow()->getHeight() / 320.0f));
 	}
 }
 
@@ -250,7 +246,7 @@ void App::render(SDL_Renderer* renderer) {
 	_drawTextField(renderer);
 
 	//_keypad
-	for (int i = 0; i < NUM_BUTTONS; i++) {
+	for (unsigned i = 0; i < NUM_BUTTONS; i++) {
 		_keypad[i].draw(renderer, _keypad_offset_x, _keypad_offset_y);
 	}
 	SDL_RenderPresent(renderer);
@@ -273,11 +269,11 @@ void App::_drawTextField(SDL_Renderer* renderer) const {
 	drawString(renderer, _inputHistory[0], _tf_offset_x, 0, {255,255,255,255}, Window::getWindow()->getWidth() / 26, true);
 }
 
-std::string App::getTextInput() const {
+const std::string& App::getTextInput() const {
 	return _textInput;
 }
 
-std::vector<std::string> App::getInputHistory() const {
+const std::vector<std::string>& App::getInputHistory() const {
 	return _inputHistory;
 }
 
