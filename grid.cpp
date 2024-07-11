@@ -46,20 +46,24 @@ void Grid::_drawAxisNumbers() {
 
 void Grid::drawFunction(SDL_Renderer* renderer, const std::string& expr) const {
 	std::string exprX = infixToPostfix(convertUnaryToBinary(expr));
+
 	if (expr.find('x') != std::string::npos) {	
 		SDL_FPoint pt = { -_zoom + _shiftx, evaluatePostfix(exprX, pt.x) };
 		float next_y = evaluatePostfix(exprX, pt.x + ((2.0f * _zoom) / _iters));
 
+		SDL_FPoint pt_s = { 0 }, next_pt_s = { 0 };
+
 		// grid coordinates to screen coordinates:
 		// shiftx/shifty back, then scale back to normal range [-1,1], then scale to width/height of screen, then shift to center of screen
 		for (unsigned int i = 0; i < _iters; i++) {
-			if (isfinite(pt.y) && isfinite(next_y)) {
-				SDL_RenderDrawLineF(renderer,
-					((pt.x - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
-					-((pt.y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety,
-					((pt.x + ((2.0f * _zoom) / _iters) - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx,
-					-((next_y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety
-				);
+
+			pt_s.x = ((pt.x - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx;
+			pt_s.y = -((pt.y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety;
+			next_pt_s.x = ((pt.x + ((2.0f * _zoom) / _iters) - _shiftx) / _zoom * (_width / 2.0f)) + (_width / 2.0f) + _offsetx;
+			next_pt_s.y = -((next_y - _shifty) / _zoom * (_height / 2.0f)) + (_height / 2.0f) + _offsety;
+
+			if (isfinite(pt_s.y) && isfinite(next_pt_s.y) && (pt_s.y > 0 && pt_s.y < _height) && (next_pt_s.y > 0 && next_pt_s.y < _height)) {
+				SDL_RenderDrawLineF(renderer, pt_s.x, pt_s.y, next_pt_s.x, next_pt_s.y);
 			}
 
 			pt.x += ((2.0f * _zoom) / _iters);

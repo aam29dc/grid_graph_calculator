@@ -103,22 +103,19 @@ std::string convertUnaryToBinary(const std::string& expr) {
 	unsigned rightPara = 0;
 	size_t i = 1;
 
-	// replace '-x' with '(0-x)':
-	if (!result.empty() && result.length() > 1 && result.at(0) == '-') {
-		result.insert(0, "(0");
-		for (i = 3; i < result.length(); i++) {
-			if (isOperator(result.at(i))) break;
+	if(!result.empty() && result.at(0) == '-'){
+		result.insert(0, "(");
+		for (i = 2; i < result.length() && !isOperator(result.at(i)); i++) {
 		}
 		result.insert(i, ")");
-		i++;
 	}
 
 	// replace repeated operators, ex: '*-x' with '*(-x)'
 	for (; i < result.length(); i++) {
 		if (isOperator(result.at(i - 1)) && result.at(i) == '-') {
 			//insert LHS '(0'
-			result.insert(i, "(0");
-			i += 2;
+			result.insert(i, "(");
+			i += 1;
 			//get RHS pos of number
 			while (i < result.length() - 1) {
 				i++;
@@ -132,6 +129,14 @@ std::string convertUnaryToBinary(const std::string& expr) {
 			i += 1;
 			result.insert(i, ")");
 		}
+	}
+
+	// then replace all '(-' with '(0-':
+	for (i=1; i < result.length(); i++) {
+		if (result.at(i - 1) == '(' && result.at(i) == '-') {
+			result.insert(i, "0");
+		}
+		i++;
 	}
 
 	return result;
